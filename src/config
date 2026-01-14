@@ -1,6 +1,6 @@
-export DIST_NAME=OctoPi
-export DIST_VERSION=1.2.0
-export MODULES="base(raspicam, network, disable-services(octopi), password-for-sudo)"
+export DIST_NAME=Wardstein-Testing-Image
+export DIST_VERSION=6.6.6
+export MODULES="base(network, auto-mount-removable, gui)"
 
 export RPI_IMAGER_NAME="${DIST_NAME} version ${DIST_VERSION}"
 export RPI_IMAGER_DESCRIPTION="A Raspberry Pi distribution for 3D printers. Ships OctoPrint out-of-the-box."
