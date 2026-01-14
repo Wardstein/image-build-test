@@ -1,10 +1,13 @@
 name: Build Image
 
-on:
-  repository_dispatch:
-  push:
-  schedule: 
-    - cron: '0 0 * * *'
+on: 
+  workflow_dispatch:
+    inputs:
+      # MAXIMUM 10 PARAMETERS POSSIBLE
+      labbox-python-software-version:
+        description: "Lab-Box Python Software Version"
+        required: false
+        default: ''
 
 jobs:
   build:
