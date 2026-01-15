@@ -8,38 +8,57 @@ export LC_ALL=C
 source /common.sh
 
 
+
+# ADD OUR NEW DEFAULT USER ------------------------------------------------------------------------------------------------------------------------------------
+adduser --disabled-password $LAB_BOX_USER
+chpasswd <<<"$LAB_BOX_USER:$LAB_BOX_USER_PASSWORD"
+usermod -a -G users,adm,dialout,tty,audio,netdev,video,plugdev,cdrom,games,input,gpio,spi,i2c,render,sudo $LAB_BOX_USER
+# Show a control output which groups the user is in
+groups $RASPI_USER
+
+# Make sure user doesn't require a password when running as sudo; https://github.com/Pioreactor/CustoPiZer/blob/pioreactor/workspace/scripts/01-make-pioreactor-user.sh
+echo "$RASPI_USER ALL=(ALL) NOPASSWD: ALL" | sudo EDITOR='tee -a' visudo -f /etc/sudoers.d/010_$RASPI_USER-nopasswd
+
+# Remove SSH pre-authentication banner
+if [ -fe /etc/ssh/sshd_config.d/rename_user.conf ]
+then 
+  rm -f /etc/ssh/sshd_config.d/rename_user.conf
+fi
+
+
+# UPDATE SOFTWARE  --------------------------------------------------------------------------------------------------------------------------------------------
+apt-get update
+apt-get -y full-upgrade
+apt-get -y --allow-change-held-packages install python3 python3-virtualenv python3-dev git
+echo "Reinstall iputils-ping"
+apt-get -y --force-yes install --reinstall iputils-ping
+# TODO: remove unneeded software?
+apt-get autoremove -y
+
+
+# SETUP RTC ---------------------------------------------------------------------------------------------------------------------------------------------------
+# Done like here: https://tutorials-raspberrypi.de/raspberry-pi-rtc-modul-i2c-echtzeituhr/ but there are many tutorials out there
+apt-get install -y i2c-tools
+echo -e "i2c-dev\nrtc-ds1307" >> /etc/modules
+sed -i -e '$i echo ds1307 0x68 > /sys/class/i2c-adapter/i2c-1/new_device\nhwclock --hctosys\n\n' /etc/rc.local
+cat /etc/rc.local
+
+
+
+
+
+
+
+
+
+
 ### Script ####
 
 # unpack /filesystem/home/pi /home/"${BASE_USER}" "${BASE_USER}"
 # unpack /filesystem/home/root /root root
 # unpack /filesystem/boot /boot/firmware
 
-# Not using apt_update_skip, forcing an update here because it does not calculate correctly
-apt-get update
-# in case we are building from a regular raspbian image instead of the lite one...
-# remove_extra=$(remove_if_installed scratch squeak-plugins-scratch squeak-vm wolfram-engine python-minecraftpi minecraft-pi sonic-pi oracle-java8-jdk bluej libreoffice-common libreoffice-core freepats greenfoot nodered)
-# echo "removing:" $remove_extra
-# apt-get remove -y --purge  $remove_extra
-apt-get autoremove -y
 
-apt-get -y --allow-change-held-packages install python3 python3-virtualenv python3-dev git
-
-echo " - Reinstall iputils-ping"
-apt-get -y --force-yes install --reinstall iputils-ping
-
-
-#Make sure user pi / ${BASE_USER} has access to serial ports
-usermod -a -G tty "${BASE_USER}"
-usermod -a -G dialout "${BASE_USER}"
-
-usermod -aG ${BASE_USER} root
-
-
-# If building against Ubuntu, make sure vcgencmd is available and pi has the rights to use it
-if [ "${BASE_DISTRO}" == "ubuntu" ]; then
-  apt-get -y --allow-change-held-packages install libraspberrypi-bin
-  usermod -a -G video "${BASE_USER}"
-fi
 
 
 if [ "${LAB_BOX_PYTHON_GUI_INSTALL}" == "yes" ]
@@ -82,7 +101,6 @@ then
   mkdir /home/"${BASE_USER}"/lab-box
   cd /home/"${BASE_USER}"/lab-box
   touch "test.txt"
-
 fi
 
 
