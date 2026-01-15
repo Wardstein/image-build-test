@@ -34,6 +34,7 @@ usermod -a -G dialout "${BASE_USER}"
 
 usermod -aG ${BASE_USER} root
 
+
 # If building against Ubuntu, make sure vcgencmd is available and pi has the rights to use it
 if [ "${BASE_DISTRO}" == "ubuntu" ]; then
   apt-get -y --allow-change-held-packages install libraspberrypi-bin
@@ -41,9 +42,48 @@ if [ "${BASE_DISTRO}" == "ubuntu" ]; then
 fi
 
 
-# allow pi / ${BASE_USER} user to run shutdown and service commands
-echo "${BASE_USER} ALL=NOPASSWD: /sbin/shutdown" > /etc/sudoers.d/octoprint-shutdown
+if [ "${LAB_BOX_PYTHON_GUI_INSTALL}" == "yes" ]
+then
+  echo "Installing Lab-Box Python GUI from repo ${LAB_BOX_PYTHON_GUI_REPO}"
+  mkdir /home/"${BASE_USER}"/lab-box-python-gui
+  cd /home/"${BASE_USER}"/lab-box-python-gui
 
+  # Clone the Lab-Box-Python-GUI repo with the tag specified in the env variable LAB_BOX_PYTHON_GUI_TAG
+  # If the env variable 'LAB_BOX_PYTHON_GUI_TAG' is empty, check the 'LAB_BOX_PYTHON_GUI_COMMIT' variable
+  # When both variables are empty, checkout the latest tag
+  if [ "${LAB_BOX_PYTHON_GUI_TAG}" != ""]
+  then
+    echo "Cloning the Lab-Box Python GUI repo with the tag: ${LAB_BOX_PYTHON_GUI_TAG}"
+    git clone --depth 1 --branch $LAB_BOX_PYTHON_GUI_TAG $LAB_BOX_PYTHON_GUI_REPO .
+  else
+    COMMIT_SHA=""
+    if [ "${LAB_BOX_PYTHON_GUI_COMMIT}" != ""]
+    then
+      echo "LAB_BOX_PYTHON_GUI_COMMIT is set to: ${LAB_BOX_PYTHON_GUI_COMMIT}"
+      COMMIT_SHA="${LAB_BOX_PYTHON_GUI_COMMIT}"
+    else
+      COMMIT_SHA="$(git rev-list --tags --max-count=1)"
+      echo "Fetched latest tag commit: ${COMMIT_SHA}"
+    fi
+    echo "Cloning the Lab-Box Python GUI repo"
+    git clone $LAB_BOX_PYTHON_GUI_REPO .
+    if [ "${COMMIT_SHA}" != ""]
+    then
+      echo "Checking out commit: ${COMMIT_SHA}"
+      git checkout $COMMIT_SHA
+    fi
+
+    ls .
+  fi
+
+  # TODO: install the required python packages from the GUI repo
+
+  # for demonstration purpose we just create a file here
+  mkdir /home/"${BASE_USER}"/lab-box
+  cd /home/"${BASE_USER}"/lab-box
+  touch "test.txt"
+
+fi
 
 
 #unpack root in the end, so etc file are not overwritten, might need to add two roots int he future
