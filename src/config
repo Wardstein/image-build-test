@@ -1,16 +1,10 @@
 export DIST_NAME=Wardstein-Testing-Image
 export DIST_VERSION=6.6.6
-export MODULES="base(network, auto-mount-removable, gui, lab-box)"
+export MODULES="base(network, auto-mount-removable, gui, admin-toolkit, lab-box)"
 
 export RPI_IMAGER_NAME="${DIST_NAME} version ${DIST_VERSION}"
 export RPI_IMAGER_DESCRIPTION="My testing image"
 export RPI_IMAGER_ICON=""
 
-
 export BASE_IMAGE_ENLARGEROOT=2000
 export BASE_IMAGE_RESIZEROOT=200
-
-
-export BASE_USER=lab-box
-export BASE_USER_PASSWORD=lab-box-pi
-export BASE_ADD_USER=yes

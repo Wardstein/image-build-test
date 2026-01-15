@@ -1,8 +1,0 @@
-
-export BASE_IMAGE_ENLARGEROOT=2000
-export BASE_IMAGE_RESIZEROOT=200
-
-
-export BASE_USER=lab-box
-export BASE_USER_PASSWORD=lab-box-pi
-export BASE_ADD_USER=yes
