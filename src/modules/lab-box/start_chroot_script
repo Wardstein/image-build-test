@@ -10,7 +10,7 @@ source /common.sh
 
 
 # ADD OUR NEW DEFAULT USER ------------------------------------------------------------------------------------------------------------------------------------
-adduser --disabled-password $LAB_BOX_USER
+adduser --gecos "" --disabled-password $LAB_BOX_USER
 chpasswd <<<"$LAB_BOX_USER:$LAB_BOX_USER_PASSWORD"
 usermod -a -G users,adm,dialout,tty,audio,netdev,video,plugdev,cdrom,games,input,gpio,spi,i2c,render,sudo $LAB_BOX_USER
 # Show a control output which groups the user is in
@@ -70,13 +70,13 @@ then
   # Clone the Lab-Box-Python-GUI repo with the tag specified in the env variable LAB_BOX_PYTHON_GUI_TAG
   # If the env variable 'LAB_BOX_PYTHON_GUI_TAG' is empty, check the 'LAB_BOX_PYTHON_GUI_COMMIT' variable
   # When both variables are empty, checkout the latest tag
-  if [ "${LAB_BOX_PYTHON_GUI_TAG}" != ""]
+  if [ ! "${LAB_BOX_PYTHON_GUI_TAG}" == ""]
   then
     echo "Cloning the Lab-Box Python GUI repo with the tag: ${LAB_BOX_PYTHON_GUI_TAG}"
     git clone --depth 1 --branch $LAB_BOX_PYTHON_GUI_TAG $LAB_BOX_PYTHON_GUI_REPO .
   else
     COMMIT_SHA=""
-    if [ "${LAB_BOX_PYTHON_GUI_COMMIT}" != ""]
+    if [ ! "${LAB_BOX_PYTHON_GUI_COMMIT}" == ""]
     then
       echo "LAB_BOX_PYTHON_GUI_COMMIT is set to: ${LAB_BOX_PYTHON_GUI_COMMIT}"
       COMMIT_SHA="${LAB_BOX_PYTHON_GUI_COMMIT}"
@@ -86,7 +86,7 @@ then
     fi
     echo "Cloning the Lab-Box Python GUI repo"
     git clone $LAB_BOX_PYTHON_GUI_REPO .
-    if [ "${COMMIT_SHA}" != ""]
+    if [ ! "${COMMIT_SHA}" == ""]
     then
       echo "Checking out commit: ${COMMIT_SHA}"
       git checkout $COMMIT_SHA
@@ -96,7 +96,8 @@ then
   fi
 
   # TODO: install the required python packages from the GUI repo
-
+  # pip3 install -r requirements.txt
+  
   # for demonstration purpose we just create a file here
   mkdir /home/"${BASE_USER}"/lab-box
   cd /home/"${BASE_USER}"/lab-box
