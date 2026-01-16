@@ -90,10 +90,12 @@ jobs:
         EOF
         
         # Rename and move the image
+        ls repository/src/workspace
         cp repository/src/workspace/*.img build/${{ env.IMAGE_NAME }}
-        zip -q build/${{ env.IMAGE_NAME_ZIP }} ${{ env.IMAGE_NAME }}
+        zip -q build/${{ env.IMAGE_NAME_ZIP }} build/${{ env.IMAGE_NAME }}
         md5sum build/${{ env.IMAGE_NAME_ZIP }} > build/${{ env.IMAGE_NAME_ZIP }}.md5
         sha512sum build/${{ env.IMAGE_NAME_ZIP }} > build/${{ env.IMAGE_NAME_ZIP }}.sha512
+        ls build
     
     # https://github.com/softprops/action-gh-release
     # Needs "Workflow permissions" in Repo->Settings->Actions->Genernal set to "Read and write permissions"
