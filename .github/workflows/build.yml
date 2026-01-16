@@ -16,7 +16,15 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt update
-        sudo apt install coreutils p7zip-full qemu-user-static python3-git
+        sudo apt install coreutils zip md5sum sha512sum qemu-user-static python3-git
+    
+    - name: "Setup Environment"
+      run: |
+        # Build image name (to rename and zip)
+        IMAGE_NAME="$(date +'%Y-%m-%d')_Lab-Box_RaspiTouchDisplayModule_Image.img"
+        echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
+        IMAGE_NAME_ZIP="$IMAGE_NAME.zip"
+        echo "IMAGE_NAME_ZIP=$IMAGE_NAME_ZIP" >> $GITHUB_ENV
 
     - name: Checkout CustomPiOS
       uses: actions/checkout@v2
@@ -34,6 +42,10 @@ jobs:
       run: |
         cd repository/src/image
         wget -c --trust-server-names 'https://downloads.raspberrypi.org/raspios_lite_armhf_latest'
+        # Store the image name for later
+        ORG_IMAGE_NAME=$(ls *.img.xz)
+        echo $ORG_IMAGE_NAME
+        echo "ORG_IMAGE_NAME=$ORG_IMAGE_NAME" >> $GITHUB_ENV
 
     - name: Update CustomPiOS Paths
       run: |
@@ -46,20 +58,57 @@ jobs:
         cd repository/src
         sudo bash -x ./build_dist
 
-    - name: Copy output
-      id: copy
-      run: |
-        source repository/src/config
-        NOW=$(date +"%Y-%m-%d-%H%M")
-        IMAGE=$NOW-octopi-$DIST_VERSION
+    # - name: Copy output
+    #   id: copy
+    #   run: |
+    #     source repository/src/config
+    #     NOW=$(date +"%Y-%m-%d-%H%M")
+    #     IMAGE=$NOW-test-image
 
-        cp repository/src/workspace/*.img $IMAGE.img
+    #     cp repository/src/workspace/*.img $IMAGE.img
 
-        echo "::set-output name=image::$IMAGE"
+    #     run: echo "image=$IMAGE" >> $GITHUB_OUTPUT
 
-    # artifact upload will take care of zipping for us
-    - uses: actions/upload-artifact@v4
-      if: github.event_name == 'schedule'
+    # # artifact upload will take care of zipping for us
+    # - uses: actions/upload-artifact@v4
+    #   with:
+    #     name: ${{ steps.copy.outputs.image }}
+    #     path: ${{ steps.copy.outputs.image }}.img
+
+    - name: "Prepare release"
+      run: |        
+        # release body
+        cat <<EOF > ./build/release.md
+        Image for the [Lab-Box](https://github.com/Wardstein/Lab-Box) [RaspberryPi Touch Display Module](https://github.com/Wardstein/Lab-Box/Modules/Display)
+
+        Based on the RaspberryPi image: $ORG_IMAGE_NAME
+
+        Created with [CustomPiOS](https://github.com/guysoft/CustomPiOS)
+
+        <!-- mark:untested -->
+        EOF
+        
+        # Rename and move the image
+        cp repository/src/workspace/*.img build/${{ env.IMAGE_NAME }}
+        mkdir build
+        zip -q build/${{ env.IMAGE_NAME_ZIP }}" ${{ env.IMAGE_NAME }}
+        md5sum build/${{ env.IMAGE_NAME_ZIP }} > build/${{ env.IMAGE_NAME_ZIP }}.md5
+        sha512sum build/${{ env.IMAGE_NAME_ZIP }} > build/${{ env.IMAGE_NAME_ZIP }}.sha512
+    
+    # https://github.com/softprops/action-gh-release
+    # Needs "Workflow permissions" in Repo->Settings->Actions->Genernal set to "Read and write permissions"
+    - name: "Create release & attach assets"
+      uses: softprops/action-gh-release@v2
+      #if: github.event_name == 'repository_dispatch'
       with:
-        name: ${{ steps.copy.outputs.image }}
-        path: ${{ steps.copy.outputs.image }}.img
+        name: "testing" #"${{ env.RELEASE_NAME }}"
+        tag_name: "testing-tag" #"${{ env.RELEASE_TAG }}"
+        body_path: "build/release.md"
+        prerelease: false
+        fail_on_unmatched_files: true
+        files: |
+          build/${{ env.IMAGE_NAME_ZIP }}
+          build/${{ env.IMAGE_NAME_ZIP }}.md5
+          build/${{ env.IMAGE_NAME_ZIP }}.sha512
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
