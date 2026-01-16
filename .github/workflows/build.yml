@@ -16,7 +16,7 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt update
-        sudo apt install coreutils zip md5sum sha512sum qemu-user-static python3-git
+        sudo apt install coreutils zip qemu-user-static python3-git
     
     - name: "Setup Environment"
       run: |
