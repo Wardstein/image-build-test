@@ -19,6 +19,11 @@ groups $RASPI_USER
 # Make sure user doesn't require a password when running as sudo; https://github.com/Pioreactor/CustoPiZer/blob/pioreactor/workspace/scripts/01-make-pioreactor-user.sh
 echo "$RASPI_USER ALL=(ALL) NOPASSWD: ALL" | sudo EDITOR='tee -a' visudo -f /etc/sudoers.d/010_$RASPI_USER-nopasswd
 
+
+# remove "pi" user
+deluser --remove-home pi
+
+
 # Remove SSH pre-authentication banner
 if [ -fe /etc/ssh/sshd_config.d/rename_user.conf ]
 then 
@@ -54,8 +59,9 @@ cat /etc/rc.local
 
 ### Script ####
 
-# unpack /filesystem/home/pi /home/"${BASE_USER}" "${BASE_USER}"
+# unpack /filesystem/home /home/"${LAB_BOX_USER}" "${LAB_BOX_USER}"
 # unpack /filesystem/home/root /root root
+# TODO: we need the old config.txt also back. Do it with this line and folder
 # unpack /filesystem/boot /boot/firmware
 
 
@@ -64,8 +70,8 @@ cat /etc/rc.local
 if [ "${LAB_BOX_PYTHON_GUI_INSTALL}" == "yes" ]
 then
   echo "Installing Lab-Box Python GUI from repo ${LAB_BOX_PYTHON_GUI_REPO}"
-  mkdir /home/"${BASE_USER}"/lab-box-python-gui
-  cd /home/"${BASE_USER}"/lab-box-python-gui
+  mkdir /home/"${LAB_BOX_USER}"/lab-box-python-gui
+  cd /home/"${LAB_BOX_USER}"/lab-box-python-gui
 
   # Clone the Lab-Box-Python-GUI repo with the tag specified in the env variable LAB_BOX_PYTHON_GUI_TAG
   # If the env variable 'LAB_BOX_PYTHON_GUI_TAG' is empty, check the 'LAB_BOX_PYTHON_GUI_COMMIT' variable
@@ -90,23 +96,14 @@ then
 
   # TODO: install the required python packages from the GUI repo
   # pip3 install -r requirements.txt
-  
-  # for demonstration purpose we just create a file here
-  mkdir /home/"${BASE_USER}"/lab-box
-  cd /home/"${BASE_USER}"/lab-box
-  touch "test.txt"
+
+  # TODO: do we want to clone the Lab-Box repo with all the modules also? Does it make sense to have a "documentation" also on the Pi?
 fi
 
 
-#unpack root in the end, so etc file are not overwritten, might need to add two roots int he future
-# unpack /filesystem/root /
-
 #####################################################################
 ### setup services
-
-
-# update-rc.d change_password defaults
-# update-rc.d change_hostname defaults
+# TODO: have a look how we can autostart the python gui with systemd. How does OctoPi does it?
 
 
 #cleanup
