@@ -70,13 +70,13 @@ then
   # Clone the Lab-Box-Python-GUI repo with the tag specified in the env variable LAB_BOX_PYTHON_GUI_TAG
   # If the env variable 'LAB_BOX_PYTHON_GUI_TAG' is empty, check the 'LAB_BOX_PYTHON_GUI_COMMIT' variable
   # When both variables are empty, checkout the latest tag
-  if [ -z "${LAB_BOX_PYTHON_GUI_TAG}" ]    # Check if not empty
+  if [ -n "${LAB_BOX_PYTHON_GUI_TAG}" ]    # Check if not empty
   then
     echo "Cloning the Lab-Box Python GUI repo with the tag: ${LAB_BOX_PYTHON_GUI_TAG}"
     git clone --depth 1 --branch $LAB_BOX_PYTHON_GUI_TAG $LAB_BOX_PYTHON_GUI_REPO .
   else
     COMMIT_SHA=""
-    if [ -z "${LAB_BOX_PYTHON_GUI_COMMIT}" ]    # Check if not empty
+    if [ -n "${LAB_BOX_PYTHON_GUI_COMMIT}" ]    # Check if not empty
     then
       echo "LAB_BOX_PYTHON_GUI_COMMIT is set to: ${LAB_BOX_PYTHON_GUI_COMMIT}"
       COMMIT_SHA="${LAB_BOX_PYTHON_GUI_COMMIT}"
@@ -86,7 +86,7 @@ then
     fi
     echo "Cloning the Lab-Box Python GUI repo"
     git clone $LAB_BOX_PYTHON_GUI_REPO .
-    if [ -z "${COMMIT_SHA}" ]    # Check not if empty
+    if [ -n "${COMMIT_SHA}" ]    # Check not if empty
     then
       echo "Checking out commit: ${COMMIT_SHA}"
       git checkout $COMMIT_SHA
