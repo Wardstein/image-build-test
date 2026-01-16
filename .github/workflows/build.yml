@@ -79,8 +79,7 @@ jobs:
       run: |        
         mkdir build
 
-        # release body
-        cat <<EOF > ./build/release.md
+        cat <<'EOF' > build/release.md
         Image for the [Lab-Box](https://github.com/Wardstein/Lab-Box) [RaspberryPi Touch Display Module](https://github.com/Wardstein/Lab-Box/Modules/Display)
 
         Based on the RaspberryPi image: $ORG_IMAGE_NAME
@@ -92,7 +91,7 @@ jobs:
         
         # Rename and move the image
         cp repository/src/workspace/*.img build/${{ env.IMAGE_NAME }}
-        zip -q build/${{ env.IMAGE_NAME_ZIP }}" ${{ env.IMAGE_NAME }}
+        zip -q build/${{ env.IMAGE_NAME_ZIP }} ${{ env.IMAGE_NAME }}
         md5sum build/${{ env.IMAGE_NAME_ZIP }} > build/${{ env.IMAGE_NAME_ZIP }}.md5
         sha512sum build/${{ env.IMAGE_NAME_ZIP }} > build/${{ env.IMAGE_NAME_ZIP }}.sha512
     
