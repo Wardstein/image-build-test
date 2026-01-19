@@ -66,9 +66,9 @@ raspi-config do_serial_cons 1           # Hardware interfaces like SPI, I2C and 
 
 
 # MODIFY SPLASHSCREEN WITH OUR LOGO ---------------------------------------------------------------------------------------------------------------------------
-mkdir /usr/share/plymouth/themes/pix/
-cp /filesystem/Lab-Box_Logo.png /usr/share/plymouth/themes/pix/splash.png
-plymouth-set-default-theme --rebuild-initrd pix
+mkdir /usr/share/plymouth/themes/lab-box/
+unpack /filesystem//usr/share/plymouth/themes/lab-box /usr/share/plymouth/themes/lab-box
+plymouth-set-default-theme --rebuild-initrd lab-box
 # https://scribles.net/customizing-boot-up-screen-on-raspberry-pi/
 # "Replace “console=tty1” with “console=tty3”. This redirects boot messages to tty3."
 sed -i 's/console=tty1/console=tty3/g' /boot/cmdline.txt

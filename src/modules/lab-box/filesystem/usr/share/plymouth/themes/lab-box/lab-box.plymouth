@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=lab-box
+Description=Lab-Box Splash
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/lab-box
+ScriptFile=/usr/share/plymouth/themes/lab-box/lab-box.script
