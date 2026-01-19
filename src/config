@@ -1,4 +1,4 @@
-export DIST_NAME=Wardstein-Testing-Image
+export DIST_NAME="Lab-Box Touch Display Module"
 export DIST_VERSION=6.6.6
 export MODULES="base(network, auto-mount-removable, gui, lab-box)"
 
@@ -6,5 +6,9 @@ export RPI_IMAGER_NAME="${DIST_NAME} version ${DIST_VERSION}"
 export RPI_IMAGER_DESCRIPTION="My testing image"
 export RPI_IMAGER_ICON=""
 
+export BASE_IMAGE_RASPBIAN=yes
 export BASE_IMAGE_ENLARGEROOT=2000
 export BASE_IMAGE_RESIZEROOT=200
+export BASE_SSH_ENABLE=yes
+
+export LAB_BOX_USER=lab-box

@@ -4,7 +4,6 @@ on:
   workflow_dispatch:
     inputs:
       # MAXIMUM 10 PARAMETERS POSSIBLE
-      # TODO: use parameters!
       labbox-python-software-tag:
         description: "Lab-Box Python Software Tag"
         required: false
@@ -13,6 +12,7 @@ on:
         description: "Release Name"
         required: true
         default: ''
+      # TODO: add a parameter if image is x32 or x64!
 
 
 jobs:
@@ -51,6 +51,7 @@ jobs:
     - name: Download Raspbian Image
       run: |
         cd repository/src/image
+        # TODO: make a decision here if image is x32 or x64!
         wget -c --trust-server-names 'https://downloads.raspberrypi.org/raspios_lite_armhf_latest'
         # Store the image name for later
         ORG_IMAGE_NAME=$(ls *.img.xz)

@@ -14,10 +14,10 @@ adduser --gecos "" --disabled-password $LAB_BOX_USER
 chpasswd <<<"$LAB_BOX_USER:$LAB_BOX_USER_PASSWORD"
 usermod -a -G users,adm,dialout,tty,audio,netdev,video,plugdev,cdrom,games,input,gpio,spi,i2c,render,sudo $LAB_BOX_USER
 # Show a control output which groups the user is in
-groups $RASPI_USER
+groups $LAB_BOX_USER
 
 # Make sure user doesn't require a password when running as sudo; https://github.com/Pioreactor/CustoPiZer/blob/pioreactor/workspace/scripts/01-make-pioreactor-user.sh
-echo "$RASPI_USER ALL=(ALL) NOPASSWD: ALL" | sudo EDITOR='tee -a' visudo -f /etc/sudoers.d/010_$RASPI_USER-nopasswd
+echo "$LAB_BOX_USER ALL=(ALL) NOPASSWD: ALL" | sudo EDITOR='tee -a' visudo -f /etc/sudoers.d/010_$LAB_BOX_USER-nopasswd
 
 
 # remove "pi" user
@@ -25,7 +25,7 @@ deluser --remove-home pi
 
 
 # Remove SSH pre-authentication banner
-if [ -fe /etc/ssh/sshd_config.d/rename_user.conf ]
+if [ -f /etc/ssh/sshd_config.d/rename_user.conf ]
 then 
   rm -f /etc/ssh/sshd_config.d/rename_user.conf
 fi
@@ -35,8 +35,7 @@ fi
 apt-get update
 apt-get -y full-upgrade
 apt-get -y --allow-change-held-packages install python3 python3-virtualenv python3-dev git
-echo "Reinstall iputils-ping"
-apt-get -y --force-yes install --reinstall iputils-ping
+# apt-get -y --force-yes install --reinstall iputils-ping
 # TODO: remove unneeded software?
 apt-get autoremove -y
 
@@ -49,24 +48,51 @@ sed -i -e '$i echo ds1307 0x68 > /sys/class/i2c-adapter/i2c-1/new_device\nhwcloc
 cat /etc/rc.local
 
 
-
-
-
-
-
-
-
-
-### Script ####
-
+# ADD CONFIG AND OTHER FILES ----------------------------------------------------------------------------------------------------------------------------------
 # unpack /filesystem/home /home/"${LAB_BOX_USER}" "${LAB_BOX_USER}"
 # unpack /filesystem/home/root /root root
-# TODO: we need the old config.txt also back. Do it with this line and folder
-# unpack /filesystem/boot /boot/firmware
+# TODO: make a decision here if image is x32 or x64!
+unpack /filesystem/boot/x32 /boot/firmware
 
 
+# SETUP RASPI CONFIGF -----------------------------------------------------------------------------------------------------------------------------------------
+# raspi-config cli documentation
+# https://www.raspberrypi.com/documentation/computers/configuration.html#raspi-config-cli
+# systemctl enable ssh
+raspi-config nonint do_hostname lab-box
+raspi-config nonint do_blanking 1
+raspi-config nonint do_net_names 0
+raspi-config do_serial_cons 1           # Hardware interfaces like SPI, I2C and Serial are already set in the config.txt file
 
 
+# MODIFY SPLASHSCREEN WITH OUR LOGO ---------------------------------------------------------------------------------------------------------------------------
+mkdir /usr/share/plymouth/themes/pix/
+cp /filesystem/Lab-Box_Logo.png /usr/share/plymouth/themes/pix/splash.png
+plymouth-set-default-theme --rebuild-initrd pix
+# https://scribles.net/customizing-boot-up-screen-on-raspberry-pi/
+# "Replace “console=tty1” with “console=tty3”. This redirects boot messages to tty3."
+sed -i 's/console=tty1/console=tty3/g' /boot/cmdline.txt
+# First replace a possible new line character at the end of the line, then append our new stuff
+sed -i ':a;N;$!ba;s/\n/ /g' /boot/cmdline.txt
+echo -n " logo.nologo vt.global_cursor_default=0 loglevel=3" >> /boot/cmdline.txt
+cat /boot/cmdline.txt
+# This is the ultimate step for Bookworm, otherwise all the above has no effect!
+# Thanks to here: https://forums.raspberrypi.com/viewtopic.php?p=2195808#p2195808
+update-initramfs -u
+
+
+# INSTALL AR1100 SETUP TOOL -----------------------------------------------------------------------------------------------------------------------------------
+# This clones the rpi-AR1100 fork we have for the Lab-Box. This is a setup tool for the AR1100 touch screen controller on the Lab-Box Raspi Touch Display Module
+# Put the raspi-firmware and linux packages on hold (exclude from updated) as it requires /boot/fimrware to be present
+apt-get install -y git make g++ libusb-1.0-0-dev libgtk2.0-dev
+cd /home/$LAB_BOX_USER
+git clone --depth 1 https://github.com/Wardstein/rpi-AR1100.git
+cd rpi-AR1100
+make
+chmod +x AR1100
+
+
+# INSTALL LAB-BOX PYTHON GUI ----------------------------------------------------------------------------------------------------------------------------------
 if [ "${LAB_BOX_PYTHON_GUI_INSTALL}" == "yes" ]
 then
   echo "Installing Lab-Box Python GUI from repo ${LAB_BOX_PYTHON_GUI_REPO}"
@@ -94,18 +120,15 @@ then
     ls .
   fi
 
-  # TODO: install the required python packages from the GUI repo
-  # pip3 install -r requirements.txt
+  # Install the required python packages from the GUI repo
+  pip3 install -r requirements.txt
+
+  # TODO: have a look how we can autostart the python gui with systemd. How does OctoPi does it?
 
   # TODO: do we want to clone the Lab-Box repo with all the modules also? Does it make sense to have a "documentation" also on the Pi?
 fi
 
 
-#####################################################################
-### setup services
-# TODO: have a look how we can autostart the python gui with systemd. How does OctoPi does it?
-
-
-#cleanup
+# Cleanup -----------------------------------------------------------------------------------------------------------------------------------------------------
 apt-get clean
 apt-get autoremove -y
