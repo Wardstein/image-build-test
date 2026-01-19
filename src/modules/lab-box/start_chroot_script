@@ -133,15 +133,16 @@ then
   # Setup autostart
   AUTOSTART_FILE="/etc/xdg/autostart/lab-box-gui.desktop"
   mkdir -p "$(dirname $AUTOSTART_FILE)"
-  cat <<'EOF' > $AUTOSTART_FILE
-  [Desktop Entry]
-  Type=Application
-  Name=Lab-Box GUI
-  Comment=Lab-Box GUI
-  NoDisplay=false
-  Exec=/usr/bin/lxterminal -e /home/$LAB_BOX_USER/lab-box-python-gui/$LAB_BOX_PYTHON_GUI_STARTFILE
-  NotShowIn=GNOME;KDE;XFCE;
-  EOF
+# NO SPACES BEFORE HERE, THIS BREAKS THE EOF
+cat <<'EOF' > $AUTOSTART_FILE
+[Desktop Entry]
+Type=Application
+Name=Lab-Box GUI
+Comment=Lab-Box GUI
+NoDisplay=false
+Exec=/usr/bin/lxterminal -e /home/$LAB_BOX_USER/lab-box-python-gui/$LAB_BOX_PYTHON_GUI_STARTFILE
+NotShowIn=GNOME;KDE;XFCE;
+EOF
   
   # TODO: do we want to clone the Lab-Box repo with all the modules also? Does it make sense to have a "documentation" also on the Pi?
 fi
