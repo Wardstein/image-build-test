@@ -34,7 +34,7 @@ fi
 # UPDATE SOFTWARE  --------------------------------------------------------------------------------------------------------------------------------------------
 apt-get update
 apt-get -y full-upgrade
-apt-get -y --allow-change-held-packages install python3 python3-pip python3-virtualenv python3-dev git
+apt-get -y --allow-change-held-packages install python3 python3-pip python3-venv python3-dev git
 # apt-get -y --force-yes install --reinstall iputils-ping
 # TODO: remove unneeded software?
 apt-get autoremove -y
@@ -118,13 +118,31 @@ then
     fi
 
     ls .
+    if [ -f $LAB_BOX_PYTHON_GUI_STARTFILE ]
+    then
+      chmod +x $LAB_BOX_PYTHON_GUI_STARTFILE
+    fi
   fi
 
   # Install the required python packages from the GUI repo
+  source venv-name
+  python -m venv $LAB_BOX_GUI_VENV
+  source $LAB_BOX_GUI_VENV/bin/activate
   python -m pip install -r requirements.txt
 
-  # TODO: have a look how we can autostart the python gui with systemd. How does OctoPi does it?
-
+  # Setup autostart
+  AUTOSTART_FILE="/etc/xdg/autostart/lab-box-gui.desktop"
+  mkdir -p "$(dirname $AUTOSTART_FILE)"
+  cat <<EOF > $AUTOSTART_FILE
+  [Desktop Entry]
+  Type=Application
+  Name=Lab-Box GUI
+  Comment=Lab-Box GUI
+  NoDisplay=false
+  Exec=/usr/bin/lxterminal -e /home/$LAB_BOX_USER/lab-box-python-gui/$LAB_BOX_PYTHON_GUI_STARTFILE
+  NotShowIn=GNOME;KDE;XFCE;
+  EOF
+  
   # TODO: do we want to clone the Lab-Box repo with all the modules also? Does it make sense to have a "documentation" also on the Pi?
 fi
 

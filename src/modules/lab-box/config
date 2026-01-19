@@ -6,3 +6,5 @@
 [ -n "$LAB_BOX_PYTHON_GUI_REPO" ] || LAB_BOX_PYTHON_GUI_REPO="https://github.com/Wardstein/Lab-Box-Python-GUI"
 [ -n "$LAB_BOX_PYTHON_GUI_TAG" ] || LAB_BOX_PYTHON_GUI_TAG=""
 [ -n "$LAB_BOX_PYTHON_GUI_COMMIT" ] || LAB_BOX_PYTHON_GUI_COMMIT=""
+
+[ -n "$LAB_BOX_PYTHON_GUI_STARTFILE" ] || LAB_BOX_PYTHON_GUI_STARTFILE="startRasPiDisplayModule.sh"

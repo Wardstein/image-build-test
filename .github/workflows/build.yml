@@ -12,6 +12,14 @@ on:
         description: "Release Name"
         required: true
         default: ''
+      default-user:
+        description: "Raspberry Pi User"
+        required: true
+        default: 'lab-box'
+      default-user-password:
+        description: "Raspberry Pi Password"
+        required: true
+        default: 'lab-box-pi'
       # TODO: add a parameter if image is x32 or x64!
 
 
@@ -24,6 +32,7 @@ jobs:
         sudo apt update
         sudo apt install coreutils zip qemu-user-static python3-git
     
+    
     - name: "Setup Environment"
       run: |
         # Build image name (to rename and zip)
@@ -34,6 +43,10 @@ jobs:
 
         LAB_BOX_PYTHON_GUI_TAG=${{ inputs.labbox-python-software-tag }}
         echo "LAB_BOX_PYTHON_GUI_TAG=$LAB_BOX_PYTHON_GUI_TAG" >> $GITHUB_ENV
+        LAB_BOX_USER=${{ inputs.default-user }}
+        echo "LAB_BOX_USER=$LAB_BOX_USER" >> $GITHUB_ENV
+        LAB_BOX_USER_PASSWORD=${{ inputs.default-user-password }}
+        echo "LAB_BOX_USER_PASSWORD=$LAB_BOX_USER_PASSWORD" >> $GITHUB_ENV
 
 
     - name: Checkout CustomPiOS
@@ -42,11 +55,13 @@ jobs:
         repository: 'guysoft/CustomPiOS'
         path: CustomPiOS
 
+
     - name: Checkout Project Repository
       uses: actions/checkout@v2
       with:
         path: repository
         submodules: true
+
 
     - name: Download Raspbian Image
       run: |
@@ -58,16 +73,19 @@ jobs:
         echo $ORG_IMAGE_NAME
         echo "ORG_IMAGE_NAME=$ORG_IMAGE_NAME" >> $GITHUB_ENV
 
+
     - name: Update CustomPiOS Paths
       run: |
         cd repository/src
         ../../CustomPiOS/src/update-custompios-paths
     
+
     - name: Build Image
       run: |
         sudo modprobe loop
         cd repository/src
         sudo bash -x ./build_dist
+
 
     - name: "Prepare release"
       run: |        
@@ -82,15 +100,25 @@ jobs:
         sha512sum ${{ env.IMAGE_NAME_ZIP }} > ${{ env.IMAGE_NAME_ZIP }}.sha512
         ls
 
+
+        # TODO: add same cool original image infos in this text as from the SmartAmp Image
         cat <<'EOF' > release.md
         Image for the [Lab-Box](https://github.com/Wardstein/Lab-Box) [RaspberryPi Touch Display Module](https://github.com/Wardstein/Lab-Box/Modules/Display)
+        To use this image, copy it to an SD card with at least 8GB. You can use e.g. [Balena Etcher](https://etcher.balena.io/).
 
-        Based on the RaspberryPi image: ${{env.ORG_IMAGE_NAME}}
+        Default credentials:
+        * User: "${{ env.LAB_BOX_USER }}"
+        * Password: "${{ env.LAB_BOX_USER_PASSWORD }}"
+
+        Pre-installed Lab-Box Python GUI version: "${{ env.LAB_BOX_PYTHON_GUI_TAG }}" (when empty it was the latest while creation)
+
+        Based on the RaspberryPi image: ${{ env.ORG_IMAGE_NAME }}
 
         Created with [CustomPiOS](https://github.com/guysoft/CustomPiOS)
 
         <!-- mark:untested -->
         EOF
+
 
     # https://github.com/softprops/action-gh-release
     # Needs "Workflow permissions" in Repo->Settings->Actions->Genernal set to "Read and write permissions"
