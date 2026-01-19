@@ -34,7 +34,7 @@ fi
 # UPDATE SOFTWARE  --------------------------------------------------------------------------------------------------------------------------------------------
 apt-get update
 apt-get -y full-upgrade
-apt-get -y --allow-change-held-packages install python3 python3-virtualenv python3-dev git
+apt-get -y --allow-change-held-packages install python3 python3-pip python3-virtualenv python3-dev git
 # apt-get -y --force-yes install --reinstall iputils-ping
 # TODO: remove unneeded software?
 apt-get autoremove -y
@@ -67,7 +67,7 @@ raspi-config do_serial_cons 1           # Hardware interfaces like SPI, I2C and 
 
 # MODIFY SPLASHSCREEN WITH OUR LOGO ---------------------------------------------------------------------------------------------------------------------------
 mkdir /usr/share/plymouth/themes/lab-box/
-unpack /filesystem//usr/share/plymouth/themes/lab-box /usr/share/plymouth/themes/lab-box
+unpack /filesystem/usr/share/plymouth/themes/lab-box /usr/share/plymouth/themes/lab-box
 plymouth-set-default-theme --rebuild-initrd lab-box
 # https://scribles.net/customizing-boot-up-screen-on-raspberry-pi/
 # "Replace “console=tty1” with “console=tty3”. This redirects boot messages to tty3."
@@ -121,7 +121,7 @@ then
   fi
 
   # Install the required python packages from the GUI repo
-  pip3 install -r requirements.txt
+  python -m pip install -r requirements.txt
 
   # TODO: have a look how we can autostart the python gui with systemd. How does OctoPi does it?
 

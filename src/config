@@ -1,6 +1,6 @@
 export DIST_NAME="Lab-Box_Touch_Display_Module"
 export DIST_VERSION=6.6.6
-export MODULES="base(network, auto-mount-removable, gui, lab-box)"
+export MODULES="base(network, auto-mount-removable, gui, lab-box, websockify)"
 
 export RPI_IMAGER_NAME="${DIST_NAME} version ${DIST_VERSION}"
 export RPI_IMAGER_DESCRIPTION="My testing image"
