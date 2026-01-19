@@ -1,4 +1,4 @@
-export DIST_NAME="Lab-Box Touch Display Module"
+export DIST_NAME="Lab-Box_Touch_Display_Module"
 export DIST_VERSION=6.6.6
 export MODULES="base(network, auto-mount-removable, gui, lab-box)"
 
