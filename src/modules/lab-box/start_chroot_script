@@ -133,7 +133,7 @@ then
   # Setup autostart
   AUTOSTART_FILE="/etc/xdg/autostart/lab-box-gui.desktop"
   mkdir -p "$(dirname $AUTOSTART_FILE)"
-  cat <<EOF > $AUTOSTART_FILE
+  cat <<'EOF' > $AUTOSTART_FILE
   [Desktop Entry]
   Type=Application
   Name=Lab-Box GUI
