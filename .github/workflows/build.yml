@@ -55,11 +55,8 @@ jobs:
     - name: Checkout CustomPiOS
       uses: actions/checkout@v2
       with:
-        # repository: 'guysoft/CustomPiOS'
-        # path: CustomPiOS
-        repository: 'jxmx/CustomPiOS'
+        repository: 'guysoft/CustomPiOS'
         path: CustomPiOS
-        ref: upstream_archfixes
 
 
     - name: Checkout Project Repository
