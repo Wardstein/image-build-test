@@ -52,10 +52,10 @@ cat /etc/rc.local
 # unpack /filesystem/home /home/"${LAB_BOX_USER}" "${LAB_BOX_USER}"
 # unpack /filesystem/home/root /root root
 # TODO: make a decision here if image is x32 or x64!
-if [ $IMAGE_BIT_WIDTH -eq 32 ]
+if [[ "$IMAGE_BIT_WIDTH" -eq 32 ]]
 then
   unpack /filesystem/boot/x32 /boot/firmware
-elif [ $IMAGE_BIT_WIDTH -eq 64 ]
+elif [[ "$IMAGE_BIT_WIDTH" -eq 64 ]]
 then
   unpack /filesystem/boot/x64 /boot/firmware
 fi
@@ -103,7 +103,7 @@ if [ "${LAB_BOX_PYTHON_GUI_INSTALL}" == "yes" ]
 then
   echo "Installing Lab-Box Python GUI from repo ${LAB_BOX_PYTHON_GUI_REPO}"
   mkdir /home/"${LAB_BOX_USER}"/lab-box-python-gui
-  cd /home/"${LAB_BOX_USER}"/lab-box-python-gui
+  pushd /home/"${LAB_BOX_USER}"/lab-box-python-gui
 
   # Clone the Lab-Box-Python-GUI repo with the tag specified in the env variable LAB_BOX_PYTHON_GUI_TAG
   # If the env variable 'LAB_BOX_PYTHON_GUI_TAG' is empty, check the 'LAB_BOX_PYTHON_GUI_COMMIT' variable
@@ -136,7 +136,12 @@ then
   source $LAB_BOX_GUI_VENV/bin/activate
   # TODO: try to get this back up, but currently this does not work, as there is no pyside6 wheel for armhf (32bit)
   # python -m pip install -r requirements.txt
-  apt-get install python3-pyside6 python3-aiohttp
+  popd
+  
+  cd /home/$LAB_BOX_USER
+  wget http://ftp.de.debian.org/debian/pool/main/p/pyside6/pyside6-tools_6.8.2.1-4_armhf.deb
+  apt install ./pyside6-tools_6.8.2.1-4_armhf.deb
+  apt-get install python3-aiohttp
 
   # Setup autostart
   AUTOSTART_FILE="/etc/xdg/autostart/lab-box-gui.desktop"

@@ -69,11 +69,11 @@ jobs:
     - name: Download Raspbian Image
       run: |
         # TODO: maybe got the OS info with the script from the SmartAmp image. Always choosing the latest might be error prone
-        if [ $IMAGE_BIT_WIDTH -eq 32 ]
+        if [[ "$IMAGE_BIT_WIDTH" -eq 32 ]]
         then
           cd repository/src/image
           wget -c --trust-server-names 'https://downloads.raspberrypi.org/raspios_lite_armhf_latest'
-        elif [ $IMAGE_BIT_WIDTH -eq 64 ]
+        elif [[ "$IMAGE_BIT_WIDTH" -eq 64 ]]
         then
           # cd repository/src/image-raspios_lite_arm64
           cd repository/src/image-raspberrypiarm64
@@ -98,10 +98,10 @@ jobs:
       run: |
         sudo modprobe loop
         cd repository/src
-        if [ $IMAGE_BIT_WIDTH -eq 32 ]
+        if [[ "$IMAGE_BIT_WIDTH" -eq 32 ]]
         then
           sudo bash -x ./build_dist
-        elif [ $IMAGE_BIT_WIDTH -eq 64 ]
+        elif [[ "$IMAGE_BIT_WIDTH" -eq 64 ]]
         then
           sudo bash -x ./build_dist rpios_lite_arm64
         else
