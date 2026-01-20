@@ -35,6 +35,9 @@ jobs:
     
     - name: "Setup Environment"
       run: |
+        # Image bit width, 32/64bit (CURRENTLY ONLY 64bit WORKS, as the pre-build PySide6 package is only available for ARM64)
+        IMAGE_BIT_WIDTH=64
+        echo "IMAGE_BIT_WIDTH=$IMAGE_BIT_WIDTH" >> $GITHUB_ENV
         # Build image name (to rename and zip)
         IMAGE_NAME="$(date +'%Y-%m-%d')_Lab-Box_RaspiTouchDisplayModule_Image.img"
         echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
@@ -65,9 +68,18 @@ jobs:
 
     - name: Download Raspbian Image
       run: |
-        cd repository/src/image
-        # TODO: make a decision here if image is x32 or x64!
-        wget -c --trust-server-names 'https://downloads.raspberrypi.org/raspios_lite_armhf_latest'
+        # TODO: maybe got the OS info with the script from the SmartAmp image. Always choosing the latest might be error prone
+        if [ $IMAGE_BIT_WIDTH -eq 32 ]
+        then
+          cd repository/src/image
+          wget -c --trust-server-names 'https://downloads.raspberrypi.org/raspios_lite_armhf_latest'
+        elif [ $IMAGE_BIT_WIDTH -eq 64 ]
+        then
+          cd repository/src/image-raspios_lite_arm64
+          wget -c --trust-server-names 'https://downloads.raspberrypi.org/raspios_lite_arm64_latest'
+        else
+          core.setFailed("Env variable IMAGE_BIT_WIDTH value: $IMAGE_BIT_WIDTH not valid!");
+        fi
         # Store the image name for later
         ORG_IMAGE_NAME=$(ls *.img.xz)
         echo $ORG_IMAGE_NAME

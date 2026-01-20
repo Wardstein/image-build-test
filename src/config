@@ -6,9 +6,18 @@ export RPI_IMAGER_NAME="${DIST_NAME} version ${DIST_VERSION}"
 export RPI_IMAGER_DESCRIPTION="My testing image"
 export RPI_IMAGER_ICON=""
 
-export BASE_IMAGE_RASPBIAN=yes
+export BASE_IMAGE_RASPBIAN=no
 export BASE_IMAGE_ENLARGEROOT=2000
-export BASE_IMAGE_RESIZEROOT=200
+export BASE_IMAGE_RESIZEROOT=500
 export BASE_SSH_ENABLE=yes
 
 export LAB_BOX_USER=lab-box
+
+if [ $IMAGE_BIT_WIDTH -eq 64]
+then
+    export BASE_DISTRO=raspios64
+    export BASE_ARCH=aarch64
+    export BASE_BOARD=raspberrypiarm64
+    export BASE_IGNORE_VARIANT_NAME=yes
+    export BASE_IMAGE_PATH=${DIST_PATH}/image-raspios_lite_arm64
+fi

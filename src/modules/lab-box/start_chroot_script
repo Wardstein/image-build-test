@@ -52,7 +52,13 @@ cat /etc/rc.local
 # unpack /filesystem/home /home/"${LAB_BOX_USER}" "${LAB_BOX_USER}"
 # unpack /filesystem/home/root /root root
 # TODO: make a decision here if image is x32 or x64!
-unpack /filesystem/boot/x32 /boot/firmware
+if [ $IMAGE_BIT_WIDTH -eq 32 ]
+then
+  unpack /filesystem/boot/x32 /boot/firmware
+elif [ $IMAGE_BIT_WIDTH -eq 64 ]
+then
+  unpack /filesystem/boot/x64 /boot/firmware
+fi
 
 
 # SETUP RASPI CONFIGF -----------------------------------------------------------------------------------------------------------------------------------------
