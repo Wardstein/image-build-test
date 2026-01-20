@@ -97,8 +97,16 @@ jobs:
       run: |
         sudo modprobe loop
         cd repository/src
-        sudo bash -x ./build_dist
-
+        if [ $IMAGE_BIT_WIDTH -eq 32 ]
+        then
+          sudo bash -x ./build_dist
+        elif [ $IMAGE_BIT_WIDTH -eq 64 ]
+        then
+          sudo bash -x ./build_dist rpios_lite_arm64
+        else
+          echo "Env variable IMAGE_BIT_WIDTH value: $IMAGE_BIT_WIDTH not valid!"
+          exit 1
+        fi
 
     - name: "Prepare release"
       run: |        
