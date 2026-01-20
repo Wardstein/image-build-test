@@ -7,6 +7,10 @@ export LC_ALL=C
 
 source /common.sh
 
+echo "deb http://deb.debian.org/debian sid main" >> /etc/apt/sources.list
+sudo apt update
+sudo apt install pyside6-tools
+
 
 
 # ADD OUR NEW DEFAULT USER ------------------------------------------------------------------------------------------------------------------------------------
@@ -138,10 +142,10 @@ then
   # python -m pip install -r requirements.txt
   popd
   
-  cd /home/$LAB_BOX_USER
-  wget http://ftp.de.debian.org/debian/pool/main/p/pyside6/pyside6-tools_6.8.2.1-4_armhf.deb
-  apt install ./pyside6-tools_6.8.2.1-4_armhf.deb
-  apt-get install python3-aiohttp
+  # cd /home/$LAB_BOX_USER
+  # wget http://ftp.de.debian.org/debian/pool/main/p/pyside6/pyside6-tools_6.8.2.1-4_armhf.deb
+  # apt install ./pyside6-tools_6.8.2.1-4_armhf.deb
+  # apt-get install python3-aiohttp
 
   # Setup autostart
   AUTOSTART_FILE="/etc/xdg/autostart/lab-box-gui.desktop"
