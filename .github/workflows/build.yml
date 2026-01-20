@@ -35,8 +35,8 @@ jobs:
     
     - name: "Setup Environment"
       run: |
-        # Image bit width, 32/64bit (CURRENTLY ONLY 64bit WORKS, as the pre-build PySide6 package is only available for ARM64)
-        IMAGE_BIT_WIDTH=64
+        # Image bit width, 32/64bit ... 32bit could be possible with apt packages instead of pip wheels? (CURRENTLY ONLY 64bit WORKS, as the pre-build PySide6 package is only available for ARM64)
+        IMAGE_BIT_WIDTH=32
         echo "IMAGE_BIT_WIDTH=$IMAGE_BIT_WIDTH" >> $GITHUB_ENV
         # Build image name (to rename and zip)
         IMAGE_NAME="$(date +'%Y-%m-%d')_Lab-Box_RaspiTouchDisplayModule_Image.img"
