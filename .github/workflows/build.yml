@@ -59,7 +59,7 @@ jobs:
         # path: CustomPiOS
         repository: 'jxmx/CustomPiOS'
         path: CustomPiOS
-        ref: '47d113545e545325b3b566954f155a870def6590'
+        ref: upstream_archfixes
 
 
     - name: Checkout Project Repository
