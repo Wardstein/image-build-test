@@ -7,7 +7,8 @@ export LC_ALL=C
 
 source /common.sh
 
-echo "deb http://deb.debian.org/debian sid main" >> /etc/apt/sources.list
+cat /etc/apt/sources.list
+ls /etc/apt/sources.list.d
 sudo apt update
 sudo apt install pyside6-tools
 
