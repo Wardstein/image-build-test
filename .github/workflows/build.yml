@@ -78,7 +78,8 @@ jobs:
           cd repository/src/image-raspios_lite_arm64
           wget -c --trust-server-names 'https://downloads.raspberrypi.org/raspios_lite_arm64_latest'
         else
-          core.setFailed("Env variable IMAGE_BIT_WIDTH value: $IMAGE_BIT_WIDTH not valid!");
+          echo "Env variable IMAGE_BIT_WIDTH value: $IMAGE_BIT_WIDTH not valid!"
+          exit 1
         fi
         # Store the image name for later
         ORG_IMAGE_NAME=$(ls *.img.xz)
