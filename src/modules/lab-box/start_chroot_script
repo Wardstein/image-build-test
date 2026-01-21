@@ -9,6 +9,17 @@ source /common.sh
 
 cat /etc/apt/sources.list
 ls /etc/apt/sources.list.d
+# TODO: how to adapt this and get the latest?
+wget -O debian-archive-keyring.deb http://ftp.de.debian.org/debian/pool/main/d/debian-archive-keyring/debian-archive-keyring_2025.1_all.deb
+apt install ./debian-archive-keyring.deb
+cat<<EOF > /etc/apt/sources.list.d/debian.sources
+Types: deb deb-src
+URIs: https://deb.debian.org/debian
+Architectures: armhf
+Suites: trixie
+Components: main
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+EOF
 sudo apt update
 sudo apt install pyside6-tools
 
