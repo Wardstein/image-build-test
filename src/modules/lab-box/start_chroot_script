@@ -26,8 +26,9 @@ Pin: origin deb.debian.org
 Pin-Priority: 100
 EOF
 apt-get update
+apt-get -y full-upgrade
 apt-get -y --allow-downgrades install pyside6-tools
-
+apt-get -y --allow-change-held-packages --allow-downgrades install python3 python3-pip python3-venv python3-dev git
 
 
 
@@ -53,18 +54,9 @@ then
 fi
 
 
-# UPDATE SOFTWARE  --------------------------------------------------------------------------------------------------------------------------------------------
-apt-get update
-apt-get -y full-upgrade
-apt-get -y --allow-change-held-packages install python3 python3-pip python3-venv python3-dev git
-# apt-get -y --force-yes install --reinstall iputils-ping
-# TODO: remove unneeded software?
-apt-get autoremove -y
-
-
 # SETUP RTC ---------------------------------------------------------------------------------------------------------------------------------------------------
 # Done like here: https://tutorials-raspberrypi.de/raspberry-pi-rtc-modul-i2c-echtzeituhr/ but there are many tutorials out there
-apt-get install -y i2c-tools
+apt-get --allow-downgrades install -y i2c-tools
 echo -e "i2c-dev\nrtc-ds1307" >> /etc/modules
 sed -i -e '$i echo ds1307 0x68 > /sys/class/i2c-adapter/i2c-1/new_device\nhwclock --hctosys\n\n' /etc/rc.local
 cat /etc/rc.local
