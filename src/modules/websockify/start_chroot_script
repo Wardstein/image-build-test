@@ -9,7 +9,7 @@ source /common.sh
 
 
 # INSTALL DEPENDENCIES ----------------------------------------------------------------------------------------------------------------------------------------
-apt-get install -y --allow-downgrades python3-numpy nginx
+apt-get install -y --allow-downgrades python3-numpy python3-setuptools nginx
 
 
 # CHECKOUT WEBSOCKIFY AND SETUP AUTOSTART ---------------------------------------------------------------------------------------------------------------------
