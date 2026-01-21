@@ -26,7 +26,7 @@ Pin: origin deb.debian.org
 Pin-Priority: 100
 EOF
 apt-get update
-apt-get -y install pyside6-tools
+apt-get -y --allow-downgrades install pyside6-tools
 
 
 
