@@ -7,29 +7,10 @@ export LC_ALL=C
 
 source /common.sh
 
-cat /etc/apt/sources.list
-ls /etc/apt/sources.list.d
-# TODO: how to adapt this and get the latest?
-wget -O debian-archive-keyring.deb http://ftp.de.debian.org/debian/pool/main/d/debian-archive-keyring/debian-archive-keyring_2025.1_all.deb
-apt install ./debian-archive-keyring.deb
-cat<<EOF > /etc/apt/sources.list.d/debian.sources
-Types: deb deb-src
-URIs: https://deb.debian.org/debian
-Architectures: armhf
-Suites: trixie
-Components: main
-Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
-EOF
-cat<<EOF > /etc/apt/preferences.d/debian
-Package: *
-Pin: origin deb.debian.org
-Pin-Priority: 100
-EOF
+# UPDATE PACKAGES ---------------------------------------------------------------------------------------------------------------------------------------------
 apt-get update
-apt-get -y --allow-downgrades full-upgrade
-apt-get -y --allow-downgrades install pyside6-tools
-apt-get -y --allow-change-held-packages --allow-downgrades install python3 python3-pip python3-venv python3-dev git
-
+apt-get full-upgrade -y
+apt-get install -y --allow-change-held-packages python3 python3-pip python3-venv python3-dev git
 
 
 # ADD OUR NEW DEFAULT USER ------------------------------------------------------------------------------------------------------------------------------------
@@ -56,7 +37,7 @@ fi
 
 # SETUP RTC ---------------------------------------------------------------------------------------------------------------------------------------------------
 # Done like here: https://tutorials-raspberrypi.de/raspberry-pi-rtc-modul-i2c-echtzeituhr/ but there are many tutorials out there
-apt-get --allow-downgrades install -y i2c-tools
+apt-get install -y i2c-tools
 echo -e "i2c-dev\nrtc-ds1307" >> /etc/modules
 sed -i -e '$i echo ds1307 0x68 > /sys/class/i2c-adapter/i2c-1/new_device\nhwclock --hctosys\n\n' /etc/rc.local
 cat /etc/rc.local
@@ -115,6 +96,27 @@ chmod +x AR1100
 # INSTALL LAB-BOX PYTHON GUI ----------------------------------------------------------------------------------------------------------------------------------
 if [ "${LAB_BOX_PYTHON_GUI_INSTALL}" == "yes" ]
 then
+  # TODO: how to adapt this and get the latest?
+  wget -O debian-archive-keyring.deb http://ftp.de.debian.org/debian/pool/main/d/debian-archive-keyring/debian-archive-keyring_2025.1_all.deb
+  apt install ./debian-archive-keyring.deb
+# NO SPACES BEFORE HERE, THIS BREAKS THE EOF
+cat << EOF > /etc/apt/sources.list.d/debian.sources
+Types: deb deb-src
+URIs: https://deb.debian.org/debian
+Architectures: armhf
+Suites: trixie
+Components: main
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+EOF
+cat << EOF > /etc/apt/preferences.d/debian
+Package: *
+Pin: origin deb.debian.org
+Pin-Priority: 100
+EOF
+  apt-get update
+  apt-get install -y --allow-downgrades pyside6-tools python3-aiohttp
+
+
   echo "Installing Lab-Box Python GUI from repo ${LAB_BOX_PYTHON_GUI_REPO}"
   mkdir /home/"${LAB_BOX_USER}"/lab-box-python-gui
   pushd /home/"${LAB_BOX_USER}"/lab-box-python-gui
@@ -152,16 +154,11 @@ then
   # python -m pip install -r requirements.txt
   popd
   
-  # cd /home/$LAB_BOX_USER
-  # wget http://ftp.de.debian.org/debian/pool/main/p/pyside6/pyside6-tools_6.8.2.1-4_armhf.deb
-  # apt install ./pyside6-tools_6.8.2.1-4_armhf.deb
-  # apt-get install python3-aiohttp
-
   # Setup autostart
   AUTOSTART_FILE="/etc/xdg/autostart/lab-box-gui.desktop"
   mkdir -p "$(dirname $AUTOSTART_FILE)"
 # NO SPACES BEFORE HERE, THIS BREAKS THE EOF
-cat <<'EOF' > $AUTOSTART_FILE
+cat << EOF > $AUTOSTART_FILE
 [Desktop Entry]
 Type=Application
 Name=Lab-Box GUI
