@@ -20,8 +20,14 @@ Suites: trixie
 Components: main
 Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
 EOF
-sudo apt update
-sudo apt install pyside6-tools
+cat<<EOF > /etc/apt/preferences.d/debian
+Package: *
+Pin: origin deb.debian.org
+Pin-Priority: 100
+EOF
+apt-get update
+apt-get -y install pyside6-tools
+
 
 
 
