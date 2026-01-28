@@ -13,6 +13,7 @@ apt-get install -y --allow-downgrades python3-numpy python3-setuptools nginx
 
 
 # CHECKOUT WEBSOCKIFY AND SETUP AUTOSTART ---------------------------------------------------------------------------------------------------------------------
+# TODO: maybe do this in a venv - also the python packages installes above - as we do not need this anymore after build
 cd /home/$RASPI_USER
 git clone --depth 1 --branch v0.11.0 https://github.com/novnc/websockify.git
 cd websockify

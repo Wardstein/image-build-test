@@ -1,9 +1,3 @@
-# export BASE_DISTRO=raspios64
-# export BASE_ARCH=aarch64
-# export BASE_BOARD=raspberrypiarm64
-# export BASE_IGNORE_VARIANT_NAME=yes
-# export BASE_IMAGE_PATH=${DIST_PATH}/image-raspios_lite_arm64
-    
 export BASE_DISTRO=raspios64
 export BASE_ARCH=aarch64
 export BASE_BOARD=raspberrypiarm64
