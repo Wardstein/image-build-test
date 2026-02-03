@@ -165,7 +165,7 @@ jobs:
     #   env:
     #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: "Create release & attach assets"
-      uses: genietim/ftp-action@releases/v4
+      uses: GenieTim/ftp-action@v4.0.1
       #if: github.event_name == 'repository_dispatch'
       with:
         host: ${{ secrets.FTP_SERVER }}
