@@ -26,7 +26,7 @@ echo "$LAB_BOX_USER ALL=(ALL) NOPASSWD: ALL" | sudo EDITOR='tee -a' visudo -f /e
 
 # remove "pi" user
 deluser --remove-home pi
-
+  
 
 # Remove SSH pre-authentication banner
 if [ -f /etc/ssh/sshd_config.d/rename_user.conf ]
