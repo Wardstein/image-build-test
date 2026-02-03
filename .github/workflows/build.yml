@@ -72,12 +72,14 @@ jobs:
         if [[ "$IMAGE_BIT_WIDTH" -eq 32 ]]
         then
           cd repository/src/image
-          wget -c --trust-server-names 'https://downloads.raspberrypi.org/raspios_lite_armhf_latest'
+          # wget -c --trust-server-names 'https://downloads.raspberrypi.org/raspios_lite_armhf_latest'    # LITE IS WITHOUT DESKTOP!
+          wget -c --trust-server-names 'downloads.raspberrypi.com/raspios_armhf_latest'
         elif [[ "$IMAGE_BIT_WIDTH" -eq 64 ]]
         then
           # cd repository/src/image-raspios_lite_arm64
           cd repository/src/image-raspberrypiarm64
-          wget -c --trust-server-names 'https://downloads.raspberrypi.org/raspios_lite_arm64_latest'
+          # wget -c --trust-server-names 'https://downloads.raspberrypi.org/raspios_lite_arm64_latest'    # LITE IS WITHOUT DESKTOP!
+          wget -c --trust-server-names 'https://downloads.raspberrypi.org/raspios_arm64_latest'
         else
           echo "Env variable IMAGE_BIT_WIDTH value: $IMAGE_BIT_WIDTH not valid!"
           exit 1
