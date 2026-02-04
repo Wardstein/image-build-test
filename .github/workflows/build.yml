@@ -43,6 +43,8 @@ jobs:
         echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
         IMAGE_NAME_ZIP="$IMAGE_NAME.zip"
         echo "IMAGE_NAME_ZIP=$IMAGE_NAME_ZIP" >> $GITHUB_ENV
+        IMAGE_NAME_TAR_XZ="$IMAGE_NAME.tar.xz"
+        echo "IMAGE_NAME_TAR_XZ=$IMAGE_NAME_TAR_XZ" >> $GITHUB_ENV
 
         LAB_BOX_PYTHON_GUI_TAG=${{ inputs.labbox-python-software-tag }}
         echo "LAB_BOX_PYTHON_GUI_TAG=$LAB_BOX_PYTHON_GUI_TAG" >> $GITHUB_ENV
@@ -120,11 +122,13 @@ jobs:
         ls ../repository/src/workspace
         cp ../repository/src/workspace/*.img ${{ env.IMAGE_NAME }}
         zip -q ${{ env.IMAGE_NAME_ZIP }} ${{ env.IMAGE_NAME }}
+        tar -cJf ${{ env.IMAGE_NAME_TAR_XZ }} ${{ env.IMAGE_NAME }}
         md5sum ${{ env.IMAGE_NAME_ZIP }} > ${{ env.IMAGE_NAME_ZIP }}.md5
         sha512sum ${{ env.IMAGE_NAME_ZIP }} > ${{ env.IMAGE_NAME_ZIP }}.sha512
         ls -la
         mkdir dist
-        cp ${{ env.IMAGE_NAME }} dist/
+        cp ${{ env.IMAGE_NAME_ZIP }} dist/
+        cp ${{ env.IMAGE_NAME_TAR_XZ }} dist/
 
 
         # TODO: add same cool original image infos in this text as from the SmartAmp Image
