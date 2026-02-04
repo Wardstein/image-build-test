@@ -132,10 +132,12 @@ jobs:
         ls -la
         mkdir dist
         cp ${{ env.IMAGE_NAME_TAR_XZ }} dist/
+        cat $IMAGE_ARCHIVE_MD5SUM > dist/${{ env.IMAGE_NAME_TAR_XZ }}.md5
+        cat $IMAGE_ARCHIVE_SHA512SUM > dist/${{ env.IMAGE_NAME_TAR_XZ }}.sha512
 
 
         # TODO: add same cool original image infos in this text as from the SmartAmp Image
-        cat <<'EOF' > dist/release.md
+        cat <<'EOF' > release.md
         Image for the [Lab-Box](https://github.com/Wardstein/Lab-Box) [RaspberryPi Touch Display Module](https://github.com/Wardstein/Lab-Box/Modules/Display)
         To use this image, copy it to an SD card with at least 8GB. You can use e.g. [Balena Etcher](https://etcher.balena.io/).
 
@@ -155,6 +157,9 @@ jobs:
 
         <!-- mark:untested -->
         EOF
+
+        # Copy the release info also for upload with unique name from image
+        cp release.md dist/RELEASE_${{ env.IMAGE_NAME }}.md
         ls -la dist
 
     - name: "Upload image to FTP server"
