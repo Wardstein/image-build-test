@@ -56,7 +56,7 @@ then
 fi
 
 
-# SETUP RASPI CONFIGF -----------------------------------------------------------------------------------------------------------------------------------------
+# SETUP RASPI CONFIG ------------------------------------------------------------------------------------------------------------------------------------------
 # raspi-config cli documentation
 # https://www.raspberrypi.com/documentation/computers/configuration.html#raspi-config-cli
 # systemctl enable ssh
@@ -64,6 +64,18 @@ raspi-config nonint do_hostname lab-box
 raspi-config nonint do_blanking 1
 raspi-config nonint do_net_names 0
 raspi-config do_serial_cons 1           # Hardware interfaces like SPI, I2C and Serial are already set in the config.txt file
+
+
+# REMOVE PIWIZ ------------------------------------------------------------------------------------------------------------------------------------------------
+# Just unistalling pywiz does not solve the startup. We boot into "rpi-first-boot-wizard" user
+# https://forums.raspberrypi.com/viewtopic.php?p=2036168&sid=7e348ea4c90ad0c51def1eb973b20258#p2036168
+[ -f /etc/xdg/autostart/piwiz.desktop ] && rm /etc/xdg/autostart/piwiz.desktop
+systemctl disable userconfig.service > /dev/null 2>&1
+systemctl mask    userconfig.service > /dev/null 2>&1
+[ "$(getent passwd rpi-first-boot-wizard)" != "" ] && userdel -r rpi-first-boot-wizard > /dev/null 2>&1
+[ -f /etc/systemd/system/getty@tty1.service.d/autologin.conf ] && rm /etc/systemd/system/getty@tty1.service.d/autologin.conf
+[ -f /etc/sudoers.d/010_wiz-nopasswd ] && rm -f /etc/sudoers.d/010_wiz-nopasswd
+[ -f /etc/xdg/autostart/deluser.desktop ] && rm -f /etc/xdg/autostart/deluser.desktop
 
 
 # MODIFY SPLASHSCREEN WITH OUR LOGO ---------------------------------------------------------------------------------------------------------------------------
