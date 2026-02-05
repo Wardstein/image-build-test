@@ -41,8 +41,8 @@ jobs:
         # Build image name (to rename and zip)
         IMAGE_NAME="$(date +'%Y-%m-%d')_Lab-Box_RaspiTouchDisplayModule_Image-${{ inputs.release-name }}.img"
         echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
-        IMAGE_NAME_TAR_ZIP="$IMAGE_NAME.zip"
-        echo "IMAGE_NAME_TAR_ZIP=$IMAGE_NAME_TAR_ZIP" >> $GITHUB_ENV
+        IMAGE_NAME_ZIP="$IMAGE_NAME.zip"
+        echo "IMAGE_NAME_ZIP=$IMAGE_NAME_ZIP" >> $GITHUB_ENV
 
         LAB_BOX_PYTHON_GUI_TAG=${{ inputs.labbox-python-software-tag }}
         echo "LAB_BOX_PYTHON_GUI_TAG=$LAB_BOX_PYTHON_GUI_TAG" >> $GITHUB_ENV
