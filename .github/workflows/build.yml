@@ -142,8 +142,8 @@ jobs:
         To use this image, copy it to an SD card with at least 8GB. You can use e.g. [Balena Etcher](https://etcher.balena.io/).
 
         DOWNLOAD HERE: [${{ env.IMAGE_NAME_TAR_XZ }}](${{ vars.FILE_DOWNLOAD_BASE_URL}}/${{ vars.FTP_UPLOAD_SUBFOLDER }}/${{ env.IMAGE_NAME_TAR_XZ }})
-        MD5: $IMAGE_ARCHIVE_MD5SUM
-        SHA512: $IMAGE_ARCHIVE_SHA512SUM
+        MD5: [${{ env.IMAGE_NAME_TAR_XZ }}.md5](${{ vars.FILE_DOWNLOAD_BASE_URL}}/${{ vars.FTP_UPLOAD_SUBFOLDER }}/${{ env.IMAGE_NAME_TAR_XZ }}.md5)
+        SHA512: [${{ env.IMAGE_NAME_TAR_XZ }}.sha512](${{ vars.FILE_DOWNLOAD_BASE_URL}}/${{ vars.FTP_UPLOAD_SUBFOLDER }}/${{ env.IMAGE_NAME_TAR_XZ }}.sha512)
 
         Default credentials:
         * User: "${{ env.LAB_BOX_USER }}"
