@@ -122,11 +122,11 @@ jobs:
         tar -cJf ${{ env.IMAGE_NAME_TAR_XZ }} ${{ env.IMAGE_NAME }}
 
         # md5sum ${{ env.IMAGE_NAME_TAR_XZ }} > ${{ env.IMAGE_NAME_TAR_XZ }}.md5
-        IMAGE_ARCHIVE_MD5SUM=$(md5sum ${{ env.IMAGE_NAME_TAR_XZ }})
+        IMAGE_ARCHIVE_MD5SUM=$(md5sum ${{ env.IMAGE_NAME_TAR_XZ }} | cut -d " " -f 1)
         echo "IMAGE_ARCHIVE_MD5SUM=$IMAGE_ARCHIVE_MD5SUM" >> $GITHUB_ENV
         
         # sha512sum ${{ env.IMAGE_NAME_TAR_XZ }} > ${{ env.IMAGE_NAME_TAR_XZ }}.sha512
-        IMAGE_ARCHIVE_SHA512SUM=$(sha512sum ${{ env.IMAGE_NAME_TAR_XZ }})
+        IMAGE_ARCHIVE_SHA512SUM=$(sha512sum ${{ env.IMAGE_NAME_TAR_XZ }} | cut -d " " -f 1)
         echo "IMAGE_ARCHIVE_SHA512SUM=$IMAGE_ARCHIVE_SHA512SUM" >> $GITHUB_ENV
         
         ls -la
@@ -142,8 +142,8 @@ jobs:
         To use this image, copy it to an SD card with at least 8GB. You can use e.g. [Balena Etcher](https://etcher.balena.io/).
 
         DOWNLOAD HERE: [${{ env.IMAGE_NAME_TAR_XZ }}](${{ vars.FILE_DOWNLOAD_BASE_URL}}/${{ vars.FTP_UPLOAD_SUBFOLDER }}/${{ env.IMAGE_NAME_TAR_XZ }})
-        MD5: ${{ env.IMAGE_ARCHIVE_MD5SUM}}
-        SHA512: ${{ env.IMAGE_ARCHIVE_SHA512SUM}}
+        MD5: $IMAGE_ARCHIVE_MD5SUM
+        SHA512: $IMAGE_ARCHIVE_SHA512SUM
 
         Default credentials:
         * User: "${{ env.LAB_BOX_USER }}"
