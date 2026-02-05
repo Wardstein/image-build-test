@@ -122,11 +122,11 @@ jobs:
         tar -cJf ${{ env.IMAGE_NAME_TAR_XZ }} ${{ env.IMAGE_NAME }}
 
         # md5sum ${{ env.IMAGE_NAME_TAR_XZ }} > ${{ env.IMAGE_NAME_TAR_XZ }}.md5
-        IMAGE_ARCHIVE_MD5SUM=`md5sum ${{ env.IMAGE_NAME_TAR_XZ }}` && export IMAGE_ARCHIVE_MD5SUM
+        IMAGE_ARCHIVE_MD5SUM=$(md5sum ${{ env.IMAGE_NAME_TAR_XZ }})
         echo "IMAGE_ARCHIVE_MD5SUM=$IMAGE_ARCHIVE_MD5SUM" >> $GITHUB_ENV
         
         # sha512sum ${{ env.IMAGE_NAME_TAR_XZ }} > ${{ env.IMAGE_NAME_TAR_XZ }}.sha512
-        IMAGE_ARCHIVE_SHA512SUM=`sha512sum ${{ env.IMAGE_NAME_TAR_XZ }}` && export IMAGE_ARCHIVE_SHA512SUM
+        IMAGE_ARCHIVE_SHA512SUM=$(sha512sum ${{ env.IMAGE_NAME_TAR_XZ }})
         echo "IMAGE_ARCHIVE_SHA512SUM=$IMAGE_ARCHIVE_SHA512SUM" >> $GITHUB_ENV
         
         ls -la
