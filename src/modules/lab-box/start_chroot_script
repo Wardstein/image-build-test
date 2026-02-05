@@ -23,10 +23,14 @@ groups $LAB_BOX_USER
 # Make sure user doesn't require a password when running as sudo; https://github.com/Pioreactor/CustoPiZer/blob/pioreactor/workspace/scripts/01-make-pioreactor-user.sh
 echo "$LAB_BOX_USER ALL=(ALL) NOPASSWD: ALL" | sudo EDITOR='tee -a' visudo -f /etc/sudoers.d/010_$LAB_BOX_USER-nopasswd
 
+# Add the new lab-box user for autologin
+sed /etc/lightdm/lightdm.conf -i -e "s/^\(#\|\)autologin-user=.*/autologin-user=$LAB_BOX_USER/"
+
 
 # remove "pi" user
 deluser --remove-home pi
-  
+[ -f /etc/sudoers.d/010_pi-nopasswd ] && rm /etc/sudoers.d/010_pi-nopasswd
+
 
 # Remove SSH pre-authentication banner
 if [ -f /etc/ssh/sshd_config.d/rename_user.conf ]
@@ -76,6 +80,12 @@ systemctl mask    userconfig.service > /dev/null 2>&1
 [ -f /etc/systemd/system/getty@tty1.service.d/autologin.conf ] && rm /etc/systemd/system/getty@tty1.service.d/autologin.conf
 [ -f /etc/sudoers.d/010_wiz-nopasswd ] && rm -f /etc/sudoers.d/010_wiz-nopasswd
 [ -f /etc/xdg/autostart/deluser.desktop ] && rm -f /etc/xdg/autostart/deluser.desktop
+[ -f /etc/xdg/autostart/pprompt.desktop ] && rm /etc/xdg/autostart/pprompt.desktop
+[ -f /usr/bin/pprompt.sh ] && rm /usr/bin/pprompt.sh
+[ -f /etc/ssh/sshd_config.d/rename_user.conf ] && rm -f /etc/ssh/sshd_config.d/rename_user.conf
+[ -f /var/lib/userconf-pi/autologin ] && rm -f /var/lib/userconf-pi/autologin
+[ -f /usr/lib/userconf-pi/userconf ] && rm -f /usr/lib/userconf-pi/userconf
+[ -f /usr/lib/userconf-pi/userconf-service ] && rm -f /usr/lib/userconf-pi/userconf-service
 
 
 # MODIFY SPLASHSCREEN WITH OUR LOGO ---------------------------------------------------------------------------------------------------------------------------
@@ -166,20 +176,15 @@ EOF
   # python -m pip install -r requirements.txt
   popd
   
-  # Setup autostart
-  AUTOSTART_FILE="/etc/xdg/autostart/lab-box-gui.desktop"
+  # Setup autostart: https://forums.raspberrypi.com/viewtopic.php?t=379321#p2267757 and https://raw.githubusercontent.com/thagrol/Guides/main/boot.pdf
+  $AUTOSTART_FILE = /home/$LAB_BOX_USER/.config/labwc/autostart
   mkdir -p "$(dirname $AUTOSTART_FILE)"
 # NO SPACES BEFORE HERE, THIS BREAKS THE EOF
 cat << EOF > $AUTOSTART_FILE
-[Desktop Entry]
-Type=Application
-Name=Lab-Box GUI
-Comment=Lab-Box GUI
-NoDisplay=false
-Exec=/usr/bin/lxterminal -e /home/$LAB_BOX_USER/lab-box-python-gui/$LAB_BOX_PYTHON_GUI_STARTFILE
-NotShowIn=GNOME;KDE;XFCE;
+# /usr/bin/lwrespawn lxterminal -e /home/lab-box/lab-box-python-gui/startRasPiDisplayModule.sh          # This restarts when application exits
+/usr/bin/lxterminal -e /home/lab-box/lab-box-python-gui/startRasPiDisplayModule.sh
 EOF
-  
+
   # TODO: do we want to clone the Lab-Box repo with all the modules also? Does it make sense to have a "documentation" also on the Pi?
 fi
 
