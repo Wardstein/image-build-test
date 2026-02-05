@@ -177,7 +177,7 @@ EOF
   popd
   
   # Setup autostart: https://forums.raspberrypi.com/viewtopic.php?t=379321#p2267757 and https://raw.githubusercontent.com/thagrol/Guides/main/boot.pdf
-  $AUTOSTART_FILE = /home/$LAB_BOX_USER/.config/labwc/autostart
+  $UTOSTART_FILE="/home/$LAB_BOX_USER/.config/labwc/autostart"
   mkdir -p "$(dirname $AUTOSTART_FILE)"
 # NO SPACES BEFORE HERE, THIS BREAKS THE EOF
 cat << EOF > $AUTOSTART_FILE
