@@ -132,8 +132,8 @@ jobs:
         ls -la
         mkdir dist
         cp ${{ env.IMAGE_NAME_TAR_XZ }} dist/
-        cat $IMAGE_ARCHIVE_MD5SUM > dist/${{ env.IMAGE_NAME_TAR_XZ }}.md5
-        cat $IMAGE_ARCHIVE_SHA512SUM > dist/${{ env.IMAGE_NAME_TAR_XZ }}.sha512
+        echo "$IMAGE_ARCHIVE_MD5SUM" > dist/${{ env.IMAGE_NAME_TAR_XZ }}.md5
+        echo "$IMAGE_ARCHIVE_SHA512SUM" > dist/${{ env.IMAGE_NAME_TAR_XZ }}.sha512
 
 
         # TODO: add same cool original image infos in this text as from the SmartAmp Image
