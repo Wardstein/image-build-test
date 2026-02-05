@@ -41,8 +41,8 @@ jobs:
         # Build image name (to rename and zip)
         IMAGE_NAME="$(date +'%Y-%m-%d')_Lab-Box_RaspiTouchDisplayModule_Image-${{ inputs.release-name }}.img"
         echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
-        IMAGE_NAME_TAR_XZ="$IMAGE_NAME.tar.xz"
-        echo "IMAGE_NAME_TAR_XZ=$IMAGE_NAME_TAR_XZ" >> $GITHUB_ENV
+        IMAGE_NAME_TAR_ZIP="$IMAGE_NAME.zip"
+        echo "IMAGE_NAME_TAR_ZIP=$IMAGE_NAME_TAR_ZIP" >> $GITHUB_ENV
 
         LAB_BOX_PYTHON_GUI_TAG=${{ inputs.labbox-python-software-tag }}
         echo "LAB_BOX_PYTHON_GUI_TAG=$LAB_BOX_PYTHON_GUI_TAG" >> $GITHUB_ENV
@@ -119,21 +119,22 @@ jobs:
         # Rename and move the image (../ because we are in the build directory now!)
         ls ../repository/src/workspace
         cp ../repository/src/workspace/*.img ${{ env.IMAGE_NAME }}
-        tar -cJf ${{ env.IMAGE_NAME_TAR_XZ }} ${{ env.IMAGE_NAME }}
+        # tar -cJf ${{ env.IMAGE_NAME_TAR_XZ }} ${{ env.IMAGE_NAME }}
+        zip -q ${{ env.IMAGE_NAME_ZIP }} ${{ env.IMAGE_NAME }}
 
-        # md5sum ${{ env.IMAGE_NAME_TAR_XZ }} > ${{ env.IMAGE_NAME_TAR_XZ }}.md5
-        IMAGE_ARCHIVE_MD5SUM=$(md5sum ${{ env.IMAGE_NAME_TAR_XZ }} | cut -d " " -f 1)
+        # md5sum ${{ env.IMAGE_NAME_ZIP }} > ${{ env.IMAGE_NAME_ZIP }}.md5
+        IMAGE_ARCHIVE_MD5SUM=$(md5sum ${{ env.IMAGE_NAME_ZIP }} | cut -d " " -f 1)
         echo "IMAGE_ARCHIVE_MD5SUM=$IMAGE_ARCHIVE_MD5SUM" >> $GITHUB_ENV
         
-        # sha512sum ${{ env.IMAGE_NAME_TAR_XZ }} > ${{ env.IMAGE_NAME_TAR_XZ }}.sha512
-        IMAGE_ARCHIVE_SHA512SUM=$(sha512sum ${{ env.IMAGE_NAME_TAR_XZ }} | cut -d " " -f 1)
+        # sha512sum ${{ env.IMAGE_NAME_ZIP }} > ${{ env.IMAGE_NAME_ZIP }}.sha512
+        IMAGE_ARCHIVE_SHA512SUM=$(sha512sum ${{ env.IMAGE_NAME_ZIP }} | cut -d " " -f 1)
         echo "IMAGE_ARCHIVE_SHA512SUM=$IMAGE_ARCHIVE_SHA512SUM" >> $GITHUB_ENV
         
         ls -la
         mkdir dist
-        cp ${{ env.IMAGE_NAME_TAR_XZ }} dist/
-        echo "$IMAGE_ARCHIVE_MD5SUM" > dist/${{ env.IMAGE_NAME_TAR_XZ }}.md5
-        echo "$IMAGE_ARCHIVE_SHA512SUM" > dist/${{ env.IMAGE_NAME_TAR_XZ }}.sha512
+        cp ${{ env.IMAGE_NAME_ZIP }} dist/
+        echo "$IMAGE_ARCHIVE_MD5SUM" > dist/${{ env.IMAGE_NAME_ZIP }}.md5
+        echo "$IMAGE_ARCHIVE_SHA512SUM" > dist/${{ env.IMAGE_NAME_ZIP }}.sha512
 
 
         # TODO: add same cool original image infos in this text as from the SmartAmp Image
@@ -141,9 +142,9 @@ jobs:
         Image for the [Lab-Box](https://github.com/Wardstein/Lab-Box) [RaspberryPi Touch Display Module](https://github.com/Wardstein/Lab-Box/Modules/Display)
         To use this image, copy it to an SD card with at least 8GB. You can use e.g. [Balena Etcher](https://etcher.balena.io/).
 
-        DOWNLOAD HERE: [${{ env.IMAGE_NAME_TAR_XZ }}](${{ vars.FILE_DOWNLOAD_BASE_URL}}/${{ vars.FTP_UPLOAD_SUBFOLDER }}/${{ env.IMAGE_NAME_TAR_XZ }})
-        MD5: [${{ env.IMAGE_NAME_TAR_XZ }}.md5](${{ vars.FILE_DOWNLOAD_BASE_URL}}/${{ vars.FTP_UPLOAD_SUBFOLDER }}/${{ env.IMAGE_NAME_TAR_XZ }}.md5)
-        SHA512: [${{ env.IMAGE_NAME_TAR_XZ }}.sha512](${{ vars.FILE_DOWNLOAD_BASE_URL}}/${{ vars.FTP_UPLOAD_SUBFOLDER }}/${{ env.IMAGE_NAME_TAR_XZ }}.sha512)
+        DOWNLOAD HERE: [${{ env.IMAGE_NAME_ZIP }}](${{ vars.FILE_DOWNLOAD_BASE_URL}}/${{ vars.FTP_UPLOAD_SUBFOLDER }}/${{ env.IMAGE_NAME_ZIP }})
+        MD5: [${{ env.IMAGE_NAME_ZIP }}.md5](${{ vars.FILE_DOWNLOAD_BASE_URL}}/${{ vars.FTP_UPLOAD_SUBFOLDER }}/${{ env.IMAGE_NAME_ZIP }}.md5)
+        SHA512: [${{ env.IMAGE_NAME_ZIP }}.sha512](${{ vars.FILE_DOWNLOAD_BASE_URL}}/${{ vars.FTP_UPLOAD_SUBFOLDER }}/${{ env.IMAGE_NAME_ZIP }}.sha512)
 
         Default credentials:
         * User: "${{ env.LAB_BOX_USER }}"
@@ -182,9 +183,9 @@ jobs:
         prerelease: false
         fail_on_unmatched_files: true
         # files: |
-        #   build/${{ env.IMAGE_NAME_TAR_XZ }}
-        #   build/${{ env.IMAGE_NAME_TAR_XZ }}.md5
-        #   build/${{ env.IMAGE_NAME_TAR_XZ }}.sha512
+        #   build/${{ env.IMAGE_NAME_ZIP }}
+        #   build/${{ env.IMAGE_NAME_ZIP }}.md5
+        #   build/${{ env.IMAGE_NAME_ZIP }}.sha512
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
