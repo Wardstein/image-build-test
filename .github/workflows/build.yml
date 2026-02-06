@@ -135,7 +135,7 @@ jobs:
         cp ${{ env.IMAGE_NAME_ZIP }} dist/
         echo "$IMAGE_ARCHIVE_MD5SUM" > dist/${{ env.IMAGE_NAME_ZIP }}.md5
         echo "$IMAGE_ARCHIVE_SHA512SUM" > dist/${{ env.IMAGE_NAME_ZIP }}.sha512
-        ZIP_ARCHIVE_SIZE=$(stat -c%s yourfile | awk '{printf "%.1f\n", $1/1024/1024/1024}')
+        ZIP_ARCHIVE_SIZE=$(stat -c%s ${{ env.IMAGE_NAME_ZIP }} | awk '{printf "%.1f\n", $1/1024/1024/1024}')
 
 
         # TODO: add same cool original image infos in this text as from the SmartAmp Image
