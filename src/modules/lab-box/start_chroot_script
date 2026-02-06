@@ -177,12 +177,12 @@ EOF
   popd
   
   # Setup autostart: https://forums.raspberrypi.com/viewtopic.php?t=379321#p2267757 and https://raw.githubusercontent.com/thagrol/Guides/main/boot.pdf
-  $UTOSTART_FILE="/home/$LAB_BOX_USER/.config/labwc/autostart"
+  AUTOSTART_FILE="/home/$LAB_BOX_USER/.config/labwc/autostart"
   mkdir -p "$(dirname $AUTOSTART_FILE)"
 # NO SPACES BEFORE HERE, THIS BREAKS THE EOF
 cat << EOF > $AUTOSTART_FILE
-# /usr/bin/lwrespawn lxterminal -e /home/lab-box/lab-box-python-gui/startRasPiDisplayModule.sh          # This restarts when application exits
-/usr/bin/lxterminal -e /home/lab-box/lab-box-python-gui/startRasPiDisplayModule.sh
+# /usr/bin/lwrespawn lxterminal -e /home/${LAB_BOX_USER}/lab-box-python-gui/startRasPiDisplayModule.sh          # This restarts when application exits
+/usr/bin/lxterminal -e /home/${LAB_BOX_USER}/lab-box-python-gui/startRasPiDisplayModule.sh
 EOF
 
   # TODO: do we want to clone the Lab-Box repo with all the modules also? Does it make sense to have a "documentation" also on the Pi?
