@@ -139,7 +139,7 @@ jobs:
 
 
         # TODO: add same cool original image infos in this text as from the SmartAmp Image
-        cat <<'EOF' > release.md
+        cat << EOF > release.md
         Image for the [Lab-Box](https://github.com/Wardstein/Lab-Box) [RaspberryPi Touch Display Module](https://github.com/Wardstein/Lab-Box/Modules/Display)
         To use this image, copy it to an SD card with at least 8GB. You can use e.g. [Balena Etcher](https://etcher.balena.io/).
 
