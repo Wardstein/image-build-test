@@ -31,7 +31,7 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt update
-        sudo apt install coreutils zip qemu-user-static python3-git
+        sudo apt install coreutils zip qemu-user-static python3-git qemu-arm-static
     
     
     - name: "Setup Environment"
