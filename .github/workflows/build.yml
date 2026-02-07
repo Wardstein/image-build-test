@@ -25,19 +25,18 @@ on:
 
 jobs:
   build:
-    #runs-on: ubuntu-latest
-    runs-on: ubuntu-24.04-arm
+    runs-on: ubuntu-latest
     steps:
     - name: Install Dependencies
       run: |
         sudo apt update
-        sudo apt install coreutils zip qemu-user-static python3-git qemu-arm-static
+        sudo apt install coreutils zip qemu-user-static python3-git
     
     
     - name: "Setup Environment"
       run: |
         # Image bit width, 32/64bit ... 32bit could be possible with apt packages instead of pip wheels? (CURRENTLY ONLY 64bit WORKS, as the pre-build PySide6 package is only available for ARM64)
-        IMAGE_BIT_WIDTH=64
+        IMAGE_BIT_WIDTH=32
         echo "IMAGE_BIT_WIDTH=$IMAGE_BIT_WIDTH" >> $GITHUB_ENV
         # Build image name (to rename and zip)
         IMAGE_NAME="$(date +'%Y-%m-%d')_Lab-Box_RaspiTouchDisplayModule_Image-${{ inputs.release-name }}.img"
@@ -56,12 +55,10 @@ jobs:
     - name: Checkout CustomPiOS
       uses: actions/checkout@v6.0.1
       with:
-        #repository: 'guysoft/CustomPiOS'
-        #path: CustomPiOS
-        #ref: "79b77a4c1a34ef551ab09e9bd84710d048b65e55"
-        repository: 'jxmx/CustomPiOS'
+        repository: 'guysoft/CustomPiOS'
         path: CustomPiOS
-        ref: "47d113545e545325b3b566954f155a870def6590"
+        ref: "79b77a4c1a34ef551ab09e9bd84710d048b65e55"
+
 
     - name: Checkout Project Repository
       uses: actions/checkout@v6.0.1
