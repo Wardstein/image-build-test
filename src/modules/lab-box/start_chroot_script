@@ -136,7 +136,7 @@ Pin: origin deb.debian.org
 Pin-Priority: 100
 EOF
   apt-get update
-  apt-get install -y --allow-downgrades pyside6-tools python3-aiohttp
+  apt-get install -y --allow-downgrades pyside6-tools python3-aiohttp python3-pyside6*
 
 
   echo "Installing Lab-Box Python GUI from repo ${LAB_BOX_PYTHON_GUI_REPO}"
