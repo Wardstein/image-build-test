@@ -56,10 +56,12 @@ jobs:
     - name: Checkout CustomPiOS
       uses: actions/checkout@v6.0.1
       with:
-        repository: 'guysoft/CustomPiOS'
+        #repository: 'guysoft/CustomPiOS'
+        #path: CustomPiOS
+        #ref: "79b77a4c1a34ef551ab09e9bd84710d048b65e55"
+        repository: 'jxmx/CustomPiOS'
         path: CustomPiOS
-        ref: "79b77a4c1a34ef551ab09e9bd84710d048b65e55"
-
+        ref: "47d113545e545325b3b566954f155a870def6590"
 
     - name: Checkout Project Repository
       uses: actions/checkout@v6.0.1
