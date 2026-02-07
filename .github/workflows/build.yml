@@ -25,7 +25,8 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    #runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     steps:
     - name: Install Dependencies
       run: |
@@ -66,7 +67,7 @@ jobs:
         submodules: true
 
 
-    - name: Download Raspbian Image
+    - name: Download RaspberryPiOS Image
       run: |
         # TODO: maybe got the OS info with the script from the SmartAmp image. Always choosing the latest might be error prone
         if [[ "$IMAGE_BIT_WIDTH" -eq 32 ]]
