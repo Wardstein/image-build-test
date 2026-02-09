@@ -9,7 +9,7 @@ source /common.sh
 
 
 # INSTALL DEPENDENCIES ----------------------------------------------------------------------------------------------------------------------------------------
-apt-get install -y --allow-downgrades python3-numpy python3-setuptools nginx
+apt-get install -y python3-numpy python3-setuptools nginx
 
 
 # CHECKOUT WEBSOCKIFY AND SETUP AUTOSTART ---------------------------------------------------------------------------------------------------------------------
@@ -22,9 +22,34 @@ python setup.py install
 # websockify should now be installed in /usr/local/bin/
 which websockify
 
-# Start websockify at boot in the rc.local file (the sed command inserts the websockify line before the last line, that is what $i does)
-# websockify runs in daemon mode, listens on port 5901 and proxies from localhost port 5900 - VNC
-sed -i -e '$i websockify -v 5901 127.0.0.1:5900\n\n' /etc/rc.local
+# Start websockify at boot as a service, websockify runs in daemon mode, listens on port 5901 and proxies from localhost port 5900 (VNC)
+cat << EOF > /etc/systemd/system/websockify.service
+[Unit]
+Description=Websockify fpr VNC
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/websockify -v 127.0.0.1:5901 127.0.0.1:5900
+RestartSec=5
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+
+# With Wayland (Dekstop) now we have "wayvnc" as the VNC server on the Pi. RealVNC does not work anymore.
+# As wayvnc has no compatible auth encoding to noVNC (used in the Webinterface of the Lab-Box Python GUI), we need to switch off authentication - for now.
+# (enable_pam is authentication with the linux OS user credentials, we do not want that, and enable_auth disables authentication at all)
+# Append a user and password anyways, with a comment for the future when authentication in noVNC should work
+sed -i -e "s/enable_pam=.*/enable_pam=false/g" /etc/wayvnc/config
+sed -i -e "s/enable_auth=.*/enable_auth=false/g" /etc/wayvnc/config
+cat << EOF >> /etc/wayvnc/config
+# Username and password are only here for future use, when noVNC and wayvnc share a common authentication scheme...
+username=lab-box-vnc
+password=lab-box-vnc
+EOF
 
 
 # SETUP NGINX -------------------------------------------------------------------------------------------------------------------------------------------------
@@ -70,9 +95,6 @@ server {
 	}
 }
 EOL
-
-
-# TODO: NEED TO FIGURE OUT WHICH VNC SERVER WE WANT AND IF WE NEED THE SPECIAL SETUP TO BE COMPATIBLE WITH noVNC
 
 
 # Cleanup -----------------------------------------------------------------------------------------------------------------------------------------------------

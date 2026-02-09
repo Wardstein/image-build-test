@@ -40,23 +40,24 @@ fi
 
 
 # SETUP RTC ---------------------------------------------------------------------------------------------------------------------------------------------------
-# Done like here: https://tutorials-raspberrypi.de/raspberry-pi-rtc-modul-i2c-echtzeituhr/ but there are many tutorials out there
-apt-get install -y i2c-tools
-echo -e "i2c-dev\nrtc-ds1307" >> /etc/modules
-sed -i -e '$i echo ds1307 0x68 > /sys/class/i2c-adapter/i2c-1/new_device\nhwclock --hctosys\n\n' /etc/rc.local
-cat /etc/rc.local
+# Done like here: https://tutorials-raspberrypi.de/raspberry-pi-rtc-modul-i2c-echtzeituhr/ and here https://pimylifeup.com/raspberry-pi-rtc/ but there are many tutorials out there
+# util-linux-extra gives us the "hwclock" command
+apt-get install -y i2c-tools util-linux-extra
+echo -e "i2c-dev" >> /etc/modules-load.d/modules.conf
+# Clock sync at startup seems to happen automatically as we have the dtoverlay=i2c-rtc,ds1307 entry in the /boot/firmware/config.txt file
 
 
 # ADD CONFIG AND OTHER FILES ----------------------------------------------------------------------------------------------------------------------------------
 # unpack /filesystem/home /home/"${LAB_BOX_USER}" "${LAB_BOX_USER}"
 # unpack /filesystem/home/root /root root
-# TODO: make a decision here if image is x32 or x64!
+# Currently we copy the files to /boot, they are then migrated into the new /boot/firmware subfolder on the first boot.
+# Tried unpacking them directly into /boot/firmware, but they seem to get overwritten?! So for now we trust in the migration.
 if [[ "$IMAGE_BIT_WIDTH" -eq 32 ]]
 then
-  unpack /filesystem/boot/x32 /boot/firmware
+  unpack /filesystem/boot/x32 /boot/
 elif [[ "$IMAGE_BIT_WIDTH" -eq 64 ]]
 then
-  unpack /filesystem/boot/x64 /boot/firmware
+  unpack /filesystem/boot/x64 /boot/
 fi
 
 
@@ -67,7 +68,8 @@ fi
 raspi-config nonint do_hostname lab-box
 raspi-config nonint do_blanking 1
 raspi-config nonint do_net_names 0
-raspi-config do_serial_cons 1           # Hardware interfaces like SPI, I2C and Serial are already set in the config.txt file
+raspi-config do_serial_cons 1           					# Hardware interfaces like SPI, I2C and Serial are already set in the config.txt file
+echo "i2c-dev" >> /etc/modules-load.d/modules.conf			# Seems to be needed, otherwise /dev/i2c-1 is not available
 
 
 # REMOVE PIWIZ ------------------------------------------------------------------------------------------------------------------------------------------------
@@ -99,8 +101,7 @@ sed -i 's/console=tty1/console=tty3/g' /boot/cmdline.txt
 sed -i ':a;N;$!ba;s/\n/ /g' /boot/cmdline.txt
 echo -n " logo.nologo vt.global_cursor_default=0 loglevel=3" >> /boot/cmdline.txt
 cat /boot/cmdline.txt
-# This is the ultimate step for Bookworm, otherwise all the above has no effect!
-# Thanks to here: https://forums.raspberrypi.com/viewtopic.php?p=2195808#p2195808
+# This is the ultimate step, otherwise all the above has no effect! Thanks to here: https://forums.raspberrypi.com/viewtopic.php?p=2195808#p2195808
 update-initramfs -u
 
 
@@ -118,27 +119,6 @@ chmod +x AR1100
 # INSTALL LAB-BOX PYTHON GUI ----------------------------------------------------------------------------------------------------------------------------------
 if [ "${LAB_BOX_PYTHON_GUI_INSTALL}" == "yes" ]
 then
-  # TODO: how to adapt this and get the latest?
-  wget -O debian-archive-keyring.deb http://ftp.de.debian.org/debian/pool/main/d/debian-archive-keyring/debian-archive-keyring_2025.1_all.deb
-  apt install ./debian-archive-keyring.deb
-# NO SPACES BEFORE HERE, THIS BREAKS THE EOF
-cat << EOF > /etc/apt/sources.list.d/debian.sources
-Types: deb deb-src
-URIs: https://deb.debian.org/debian
-Architectures: armhf
-Suites: trixie
-Components: main
-Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
-EOF
-cat << EOF > /etc/apt/preferences.d/debian
-Package: *
-Pin: origin deb.debian.org
-Pin-Priority: 100
-EOF
-  apt-get update
-  apt-get install -y --allow-downgrades pyside6-tools python3-aiohttp python3-pyside6*
-
-
   echo "Installing Lab-Box Python GUI from repo ${LAB_BOX_PYTHON_GUI_REPO}"
   mkdir /home/"${LAB_BOX_USER}"/lab-box-python-gui
   pushd /home/"${LAB_BOX_USER}"/lab-box-python-gui
@@ -168,13 +148,16 @@ EOF
     fi
   fi
 
-  # Install the required python packages from the GUI repo
-  source venv-name
-  # Create the virtual environment WITH THE SYSTEM PACKAGES ACCESS (I know this is counter the idea of virtual environments, but there are no python packages for ARMhf for PySide6  as of Jan-2026!)
-  python -m venv $LAB_BOX_GUI_VENV --system-site-packages
-  source $LAB_BOX_GUI_VENV/bin/activate
-  # TODO: try to get this back up, but currently this does not work, as there is no pyside6 wheel for armhf (32bit)
-  # python -m pip install -r requirements.txt
+  # pyside6 wheel only exist for arm64, so this works only with 64bit images
+  if [[ "$IMAGE_BIT_WIDTH" -eq 64 ]]
+  then
+    # Install the required python packages from the GUI repo
+    source venv-name
+    # Create the virtual environment WITH THE SYSTEM PACKAGES ACCESS (I know this is counter the idea of virtual environments, but there are no python packages for ARMhf for PySide6  as of Jan-2026!)
+    python -m venv $LAB_BOX_GUI_VENV --system-site-packages
+    source $LAB_BOX_GUI_VENV/bin/activate
+    python -m pip install -r requirements.txt
+  fi
   popd
   
   # Setup autostart: https://forums.raspberrypi.com/viewtopic.php?t=379321#p2267757 and https://raw.githubusercontent.com/thagrol/Guides/main/boot.pdf
