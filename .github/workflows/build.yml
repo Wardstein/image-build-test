@@ -100,11 +100,11 @@ jobs:
 
     - name: Build Image
       run: |
-        echo "IMAGE_BIT_WIDTH=${{ env.IMAGE_BIT_WIDTH }}" > repository/src/config.local
-        echo "LAB_BOX_USER=${{ env.LAB_BOX_USER }}" >> repository/src/config.local
-        echo "LAB_BOX_USER_PASSWORD=${{ env.LAB_BOX_USER_PASSWORD }}" >> repository/src/config.local
-        echo "LAB_BOX_PYTHON_GUI_TAG=${{ env.LAB_BOX_PYTHON_GUI_TAG }}" >> repository/src/config.local
-        echo "LAB_BOX_PYTHON_GUI_COMMIT=${{ env.LAB_BOX_PYTHON_GUI_COMMIT }}" >> repository/src/config.local
+        echo "export IMAGE_BIT_WIDTH=${{ env.IMAGE_BIT_WIDTH }}" > repository/src/config.local
+        echo "export LAB_BOX_USER=${{ env.LAB_BOX_USER }}" >> repository/src/config.local
+        echo "export LAB_BOX_USER_PASSWORD=${{ env.LAB_BOX_USER_PASSWORD }}" >> repository/src/config.local
+        echo "export LAB_BOX_PYTHON_GUI_TAG=${{ env.LAB_BOX_PYTHON_GUI_TAG }}" >> repository/src/config.local
+        echo "export LAB_BOX_PYTHON_GUI_COMMIT=${{ env.LAB_BOX_PYTHON_GUI_COMMIT }}" >> repository/src/config.local
         cat repository/src/config.local
         
         sudo modprobe loop

@@ -7,6 +7,11 @@ export LC_ALL=C
 
 source /common.sh
 
+echo "PRINT ALL THE VARIABLES"
+printenv
+# or set to show also shell environment vars thanks @gordon
+set
+
 echo "${IMAGE_BIT_WIDTH}"
 echo $IMAGE_BIT_WIDTH
 echo "Building ${IMAGE_BIT_WIDTH} bit image"
