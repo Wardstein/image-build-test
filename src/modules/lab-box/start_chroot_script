@@ -59,14 +59,12 @@ cat /boot/config.txt
 # SETUP RASPI CONFIG ------------------------------------------------------------------------------------------------------------------------------------------
 # raspi-config cli documentation
 # https://www.raspberrypi.com/documentation/computers/configuration.html#raspi-config-cli
-# systemctl enable ssh
 raspi-config nonint do_hostname lab-box						# Set the visible mDNS name for this Raspberry Pi on a network.
 raspi-config nonint do_blanking 1							# Disable screen blanking
 raspi-config nonint do_net_names 0							# Enable predictable network interface names
 raspi-config nonint do_rpi_connect 1						# Disable Raspberry Pi Connect
-raspi-config nonint do_vnc 0								# Enable VNC server
 raspi-config nonint do_serial_cons 1           				# Hardware interfaces like SPI, I2C and Serial are already set in the config.txt file
-sudo raspi-config nonint do_rgpio 1							# Disable remote GPIO
+# Do not use enable VNC here, as this enables the X11 VNC server and all new images have wayland
 echo "i2c-dev" >> /etc/modules-load.d/modules.conf			# Seems to be needed, otherwise /dev/i2c-1 is not available
 
 
