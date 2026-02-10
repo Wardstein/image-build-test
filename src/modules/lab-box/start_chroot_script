@@ -42,21 +42,23 @@ deluser --remove-home pi
 # util-linux-extra gives us the "hwclock" command
 apt-get install -y i2c-tools util-linux-extra
 echo -e "i2c-dev" >> /etc/modules-load.d/modules.conf
-# Clock sync at startup seems to happen automatically as we have the dtoverlay=i2c-rtc,ds1307 entry in the /boot/(firmware/)config.txt file
+# Clock sync at startup seems to happen automatically as we have the dtoverlay=i2c-rtc,ds1307 entry in the /boot/firmware/config.txt file
 
 
 # ADD CONFIG AND OTHER FILES ----------------------------------------------------------------------------------------------------------------------------------
 # unpack /filesystem/home /home/"${LAB_BOX_USER}" "${LAB_BOX_USER}"
 # unpack /filesystem/home/root /root root
 cat /boot/config.txt
+cat /boot/firmware/config.txt
 if [[ "${IMAGE_BIT_WIDTH}" -eq 32 ]]
 then
-  unpack /filesystem/boot/x32 /boot
+  unpack /filesystem/boot/x32 /boot/firmware
 elif [[ "${IMAGE_BIT_WIDTH}" -eq 64 ]]
 then
-  unpack /filesystem/boot/x64 /boot
+  unpack /filesystem/boot/x64 /boot/firmware
 fi
 cat /boot/config.txt
+cat /boot/firmware/config.txt
 
 
 # SETUP RASPI CONFIG ------------------------------------------------------------------------------------------------------------------------------------------
@@ -88,6 +90,7 @@ systemctl mask    userconfig.service > /dev/null 2>&1
 [ -f /usr/lib/userconf-pi/userconf ] && rm -f /usr/lib/userconf-pi/userconf
 [ -f /usr/lib/userconf-pi/userconf-service ] && rm -f /usr/lib/userconf-pi/userconf-service
 [ -f /boot/userconf.txt ] && rm -f /boot/userconf.txt
+[ -f /boot/firmware/userconf.txt ] && rm -f /boot/firmware/userconf.txt
 
 
 # MODIFY SPLASHSCREEN WITH OUR LOGO ---------------------------------------------------------------------------------------------------------------------------
@@ -96,12 +99,12 @@ unpack /filesystem/usr/share/plymouth/themes/lab-box /usr/share/plymouth/themes/
 plymouth-set-default-theme --rebuild-initrd lab-box
 # https://scribles.net/customizing-boot-up-screen-on-raspberry-pi/
 # "Replace “console=tty1” with “console=tty3”. This redirects boot messages to tty3."
-cat /boot/cmdline.txt
-sed -i 's/console=tty1/console=tty3/g' /boot/cmdline.txt
+cat /boot/firmware/cmdline.txt
+sed -i 's/console=tty1/console=tty3/g' /boot/firmware/cmdline.txt
 # First replace a possible new line character at the end of the line, then append our new stuff
-sed -i ':a;N;$!ba;s/\n//g' /boot/cmdline.txt
-echo -n " logo.nologo vt.global_cursor_default=0 loglevel=3" >> /boot/cmdline.txt
-cat /boot/cmdline.txt
+sed -i ':a;N;$!ba;s/\n//g' /boot/firmware/cmdline.txt
+echo -n " logo.nologo vt.global_cursor_default=0 loglevel=3" >> /boot/firmware/cmdline.txt
+cat /boot/firmware/cmdline.txt
 # This is the ultimate step, otherwise all the above has no effect! Thanks to here: https://forums.raspberrypi.com/viewtopic.php?p=2195808#p2195808
 update-initramfs -u
 
