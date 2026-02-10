@@ -100,14 +100,15 @@ jobs:
 
     - name: Build Image
       run: |
+        export IMAGE_BIT_WIDTH=${{ env.IMAGE_BIT_WIDTH }}
+        export LAB_BOX_USER=${{ env.LAB_BOX_USER }}
+        export LAB_BOX_USER_PASSWORD=${{ env.LAB_BOX_USER_PASSWORD }}
+        export LAB_BOX_PYTHON_GUI_TAG=${{ env.LAB_BOX_PYTHON_GUI_TAG }}
+        export LAB_BOX_PYTHON_GUI_COMMIT=${{ env.LAB_BOX_PYTHON_GUI_COMMIT }}
+        
         sudo modprobe loop
         cd repository/src
         sudo bash -x ./build_dist ${{ env.CUSTOMPIOS_VARIANT_NAME }}
-      env:
-        IMAGE_BIT_WIDTH: ${{ env.IMAGE_BIT_WIDTH }}
-        LAB_BOX_USER: ${{ env.LAB_BOX_USER }}
-        LAB_BOX_PYTHON_GUI_TAG: ${{ env.LAB_BOX_PYTHON_GUI_TAG }}
-        LAB_BOX_PYTHON_GUI_COMMIT: ${{ env.LAB_BOX_PYTHON_GUI_COMMIT }}
         
 
     - name: "Prepare release"
