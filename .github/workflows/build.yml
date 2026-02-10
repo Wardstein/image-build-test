@@ -105,11 +105,14 @@ jobs:
         export LAB_BOX_USER_PASSWORD=${{ env.LAB_BOX_USER_PASSWORD }}
         export LAB_BOX_PYTHON_GUI_TAG=${{ env.LAB_BOX_PYTHON_GUI_TAG }}
         export LAB_BOX_PYTHON_GUI_COMMIT=${{ env.LAB_BOX_PYTHON_GUI_COMMIT }}
+        TESTVARIABLE="hello"
+        export TESTVARIABLE2="hello2"
         
         sudo modprobe loop
         cd repository/src
         sudo bash -x ./build_dist ${{ env.CUSTOMPIOS_VARIANT_NAME }}
-        
+      env:
+        TESTVARIABLE3="hello3"
 
     - name: "Prepare release"
       run: |        
