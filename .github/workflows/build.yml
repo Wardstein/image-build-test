@@ -44,7 +44,9 @@ jobs:
         echo "IMAGE_NAME_ZIP=$IMAGE_NAME_ZIP" >> $GITHUB_ENV
 
         LAB_BOX_PYTHON_GUI_TAG=${{ inputs.labbox-python-software-tag }}
+        LAB_BOX_PYTHON_GUI_COMMIT=""
         echo "LAB_BOX_PYTHON_GUI_TAG=$LAB_BOX_PYTHON_GUI_TAG" >> $GITHUB_ENV
+        echo "LAB_BOX_PYTHON_GUI_COMMIT=$LAB_BOX_PYTHON_GUI_COMMIT" >> $GITHUB_ENV
         LAB_BOX_USER=${{ inputs.default-user }}
         echo "LAB_BOX_USER=$LAB_BOX_USER" >> $GITHUB_ENV
         LAB_BOX_USER_PASSWORD=${{ inputs.default-user-password }}
@@ -101,6 +103,11 @@ jobs:
         sudo modprobe loop
         cd repository/src
         sudo bash -x ./build_dist ${{ env.CUSTOMPIOS_VARIANT_NAME }}
+      env:
+        IMAGE_BIT_WIDTH: ${{ env.IMAGE_BIT_WIDTH }}
+        LAB_BOX_USER: ${{ env.LAB_BOX_USER }}
+        LAB_BOX_PYTHON_GUI_TAG: ${{ env.LAB_BOX_PYTHON_GUI_TAG }}
+        LAB_BOX_PYTHON_GUI_COMMIT: ${{ env.LAB_BOX_PYTHON_GUI_COMMIT }}
         
 
     - name: "Prepare release"

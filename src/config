@@ -1,6 +1,5 @@
 export DIST_NAME="Lab-Box_Touch_Display_Module"
 export DIST_VERSION=6.6.6
-#export MODULES="base(network, auto-mount-removable, gui, lab-box, websockify)"
 export MODULES="base(network, auto-mount-removable, lab-box, websockify)"
 
 export RPI_IMAGER_NAME="${DIST_NAME} version ${DIST_VERSION}"
@@ -11,5 +10,3 @@ export BASE_IMAGE_RASPBIAN=no
 export BASE_IMAGE_ENLARGEROOT=2000
 export BASE_IMAGE_RESIZEROOT=500
 export BASE_SSH_ENABLE=yes
-
-export LAB_BOX_USER=lab-box
