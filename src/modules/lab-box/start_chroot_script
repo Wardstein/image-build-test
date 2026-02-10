@@ -48,8 +48,6 @@ echo -e "i2c-dev" >> /etc/modules-load.d/modules.conf
 # ADD CONFIG AND OTHER FILES ----------------------------------------------------------------------------------------------------------------------------------
 # unpack /filesystem/home /home/"${LAB_BOX_USER}" "${LAB_BOX_USER}"
 # unpack /filesystem/home/root /root root
-cat /boot/config.txt
-cat /boot/firmware/config.txt
 if [[ "${IMAGE_BIT_WIDTH}" -eq 32 ]]
 then
   unpack /filesystem/boot/x32 /boot/firmware
@@ -57,8 +55,6 @@ elif [[ "${IMAGE_BIT_WIDTH}" -eq 64 ]]
 then
   unpack /filesystem/boot/x64 /boot/firmware
 fi
-cat /boot/config.txt
-cat /boot/firmware/config.txt
 
 
 # SETUP RASPI CONFIG ------------------------------------------------------------------------------------------------------------------------------------------
@@ -102,8 +98,9 @@ plymouth-set-default-theme --rebuild-initrd lab-box
 cat /boot/firmware/cmdline.txt
 sed -i 's/console=tty1/console=tty3/g' /boot/firmware/cmdline.txt
 # First replace a possible new line character at the end of the line, then append our new stuff
-sed -i ':a;N;$!ba;s/\n//g' /boot/firmware/cmdline.txt
-echo -n " logo.nologo vt.global_cursor_default=0 loglevel=3" >> /boot/firmware/cmdline.txt
+# sed -i ':a;N;$!ba;s/\n/ /g' /boot/firmware/cmdline.txt
+# echo -n " logo.nologo vt.global_cursor_default=0 loglevel=3" >> /boot/firmware/cmdline.txt
+sudo sed -i -e 's/$/ logo.nologo vt.global_cursor_default=0 loglevel=3/' /boot/cmdline.txt
 cat /boot/firmware/cmdline.txt
 # This is the ultimate step, otherwise all the above has no effect! Thanks to here: https://forums.raspberrypi.com/viewtopic.php?p=2195808#p2195808
 update-initramfs -u
