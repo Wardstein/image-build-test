@@ -34,7 +34,7 @@ jobs:
     
     - name: "Setup Environment"
       run: |
-        # Image bit width, 32/64bit ... 32bit could be possible with apt packages instead of pip wheels? (CURRENTLY ONLY 64bit WORKS, as the pre-build PySide6 package is only available for ARM64)
+        # Image bit width, 32/64bit (CURRENTLY ONLY 64bit WORKS, as the pre-build PySide6 package is only available for ARM64)
         IMAGE_BIT_WIDTH=64
         echo "IMAGE_BIT_WIDTH=$IMAGE_BIT_WIDTH" >> $GITHUB_ENV
         # Build image name (to rename and zip)
@@ -42,14 +42,16 @@ jobs:
         echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
         IMAGE_NAME_ZIP="$IMAGE_NAME.zip"
         echo "IMAGE_NAME_ZIP=$IMAGE_NAME_ZIP" >> $GITHUB_ENV
-
+        
+        LAB_BOX_PYTHON_GUI_INSTALL=yes
         LAB_BOX_PYTHON_GUI_TAG=${{ inputs.labbox-python-software-tag }}
         LAB_BOX_PYTHON_GUI_COMMIT=""
+        LAB_BOX_USER=${{ inputs.default-user }}
+        LAB_BOX_USER_PASSWORD=${{ inputs.default-user-password }}
+        echo "LAB_BOX_PYTHON_GUI_INSTALL=$LAB_BOX_PYTHON_GUI_INSTALL" >> $GITHUB_ENV
         echo "LAB_BOX_PYTHON_GUI_TAG=$LAB_BOX_PYTHON_GUI_TAG" >> $GITHUB_ENV
         echo "LAB_BOX_PYTHON_GUI_COMMIT=$LAB_BOX_PYTHON_GUI_COMMIT" >> $GITHUB_ENV
-        LAB_BOX_USER=${{ inputs.default-user }}
         echo "LAB_BOX_USER=$LAB_BOX_USER" >> $GITHUB_ENV
-        LAB_BOX_USER_PASSWORD=${{ inputs.default-user-password }}
         echo "LAB_BOX_USER_PASSWORD=$LAB_BOX_USER_PASSWORD" >> $GITHUB_ENV
 
 
@@ -100,9 +102,11 @@ jobs:
 
     - name: Build Image
       run: |
+        # Export is important here, otherwise the module "subscripts" do not get the variables!
         echo "export IMAGE_BIT_WIDTH=${{ env.IMAGE_BIT_WIDTH }}" > repository/src/config.local
         echo "export LAB_BOX_USER=${{ env.LAB_BOX_USER }}" >> repository/src/config.local
         echo "export LAB_BOX_USER_PASSWORD=${{ env.LAB_BOX_USER_PASSWORD }}" >> repository/src/config.local
+        echo "export LAB_BOX_PYTHON_GUI_INSTALL=${{ env.LAB_BOX_PYTHON_GUI_INSTALL }}" >> repository/src/config.local
         echo "export LAB_BOX_PYTHON_GUI_TAG=${{ env.LAB_BOX_PYTHON_GUI_TAG }}" >> repository/src/config.local
         echo "export LAB_BOX_PYTHON_GUI_COMMIT=${{ env.LAB_BOX_PYTHON_GUI_COMMIT }}" >> repository/src/config.local
         cat repository/src/config.local
@@ -110,8 +114,6 @@ jobs:
         sudo modprobe loop
         cd repository/src
         sudo bash -x ./build_dist ${{ env.CUSTOMPIOS_VARIANT_NAME }}
-      env:
-        TESTVARIABLE3: "hello3"
 
 
     - name: "Prepare release"
