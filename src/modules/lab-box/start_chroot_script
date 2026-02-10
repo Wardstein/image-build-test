@@ -100,7 +100,7 @@ sed -i 's/console=tty1/console=tty3/g' /boot/firmware/cmdline.txt
 # First replace a possible new line character at the end of the line, then append our new stuff
 # sed -i ':a;N;$!ba;s/\n/ /g' /boot/firmware/cmdline.txt
 # echo -n " logo.nologo vt.global_cursor_default=0 loglevel=3" >> /boot/firmware/cmdline.txt
-sudo sed -i -e 's/$/ logo.nologo vt.global_cursor_default=0 loglevel=3/' /boot/cmdline.txt
+sed -i -e 's/$/ logo.nologo vt.global_cursor_default=0 loglevel=3/' /boot/firmware/cmdline.txt
 cat /boot/firmware/cmdline.txt
 # This is the ultimate step, otherwise all the above has no effect! Thanks to here: https://forums.raspberrypi.com/viewtopic.php?p=2195808#p2195808
 update-initramfs -u
