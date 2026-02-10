@@ -26,17 +26,12 @@ echo "$LAB_BOX_USER ALL=(ALL) NOPASSWD: ALL" | sudo EDITOR='tee -a' visudo -f /e
 # Add the new lab-box user for autologin
 sed /etc/lightdm/lightdm.conf -i -e "s/^\(#\|\)autologin-user=.*/autologin-user=$LAB_BOX_USER/"
 
-
 # remove "pi" user
 deluser --remove-home pi
 [ -f /etc/sudoers.d/010_pi-nopasswd ] && rm /etc/sudoers.d/010_pi-nopasswd
 
-
 # Remove SSH pre-authentication banner
-if [ -f /etc/ssh/sshd_config.d/rename_user.conf ]
-then 
-  rm -f /etc/ssh/sshd_config.d/rename_user.conf
-fi
+[ -f /etc/ssh/sshd_config.d/rename_user.conf ] && rm -f /etc/ssh/sshd_config.d/rename_user.conf
 
 
 # SETUP RTC ---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -44,30 +39,34 @@ fi
 # util-linux-extra gives us the "hwclock" command
 apt-get install -y i2c-tools util-linux-extra
 echo -e "i2c-dev" >> /etc/modules-load.d/modules.conf
-# Clock sync at startup seems to happen automatically as we have the dtoverlay=i2c-rtc,ds1307 entry in the /boot/firmware/config.txt file
+# Clock sync at startup seems to happen automatically as we have the dtoverlay=i2c-rtc,ds1307 entry in the /boot/(firmware/)config.txt file
 
 
 # ADD CONFIG AND OTHER FILES ----------------------------------------------------------------------------------------------------------------------------------
 # unpack /filesystem/home /home/"${LAB_BOX_USER}" "${LAB_BOX_USER}"
 # unpack /filesystem/home/root /root root
 cat /boot/config.txt
-if [[ "$IMAGE_BIT_WIDTH" -eq 32 ]]
+if [[ "${IMAGE_BIT_WIDTH}" -eq 32 ]]
 then
-  unpack /filesystem/boot/x32 /boot/firmware
-elif [[ "$IMAGE_BIT_WIDTH" -eq 64 ]]
+  unpack /filesystem/boot/x32 /boot
+elif [[ "${IMAGE_BIT_WIDTH}" -eq 64 ]]
 then
-  unpack /filesystem/boot/x64 /boot/firmware
+  unpack /filesystem/boot/x64 /boot
 fi
+cat /boot/config.txt
 
 
 # SETUP RASPI CONFIG ------------------------------------------------------------------------------------------------------------------------------------------
 # raspi-config cli documentation
 # https://www.raspberrypi.com/documentation/computers/configuration.html#raspi-config-cli
 # systemctl enable ssh
-raspi-config nonint do_hostname lab-box
-raspi-config nonint do_blanking 1
-raspi-config nonint do_net_names 0
-raspi-config do_serial_cons 1           					# Hardware interfaces like SPI, I2C and Serial are already set in the config.txt file
+raspi-config nonint do_hostname lab-box						# Set the visible mDNS name for this Raspberry Pi on a network.
+raspi-config nonint do_blanking 1							# Disable screen blanking
+raspi-config nonint do_net_names 0							# Enable predictable network interface names
+raspi-config nonint do_rpi_connect 1						# Disable Raspberry Pi Connect
+raspi-config nonint do_vnc 0								# Enable VNC server
+raspi-config nonint do_serial_cons 1           				# Hardware interfaces like SPI, I2C and Serial are already set in the config.txt file
+sudo raspi-config nonint do_rgpio 1							# Disable remote GPIO
 echo "i2c-dev" >> /etc/modules-load.d/modules.conf			# Seems to be needed, otherwise /dev/i2c-1 is not available
 
 
@@ -87,6 +86,7 @@ systemctl mask    userconfig.service > /dev/null 2>&1
 [ -f /var/lib/userconf-pi/autologin ] && rm -f /var/lib/userconf-pi/autologin
 [ -f /usr/lib/userconf-pi/userconf ] && rm -f /usr/lib/userconf-pi/userconf
 [ -f /usr/lib/userconf-pi/userconf-service ] && rm -f /usr/lib/userconf-pi/userconf-service
+[ -f /boot/userconf.txt ] && rm -f /boot/userconf.txt
 
 
 # MODIFY SPLASHSCREEN WITH OUR LOGO ---------------------------------------------------------------------------------------------------------------------------
@@ -95,18 +95,18 @@ unpack /filesystem/usr/share/plymouth/themes/lab-box /usr/share/plymouth/themes/
 plymouth-set-default-theme --rebuild-initrd lab-box
 # https://scribles.net/customizing-boot-up-screen-on-raspberry-pi/
 # "Replace “console=tty1” with “console=tty3”. This redirects boot messages to tty3."
-sed -i 's/console=tty1/console=tty3/g' /boot/firmware/cmdline.txt
+cat /boot/cmdline.txt
+sed -i 's/console=tty1/console=tty3/g' /boot/cmdline.txt
 # First replace a possible new line character at the end of the line, then append our new stuff
-sed -i ':a;N;$!ba;s/\n/ /g' /boot/firmware/cmdline.txt
-echo -n " logo.nologo vt.global_cursor_default=0 loglevel=3" >> /boot/firmware/cmdline.txt
-cat /boot/firmware/cmdline.txt
+sed -i ':a;N;$!ba;s/\n//g' /boot/cmdline.txt
+echo -n " logo.nologo vt.global_cursor_default=0 loglevel=3" >> /boot/cmdline.txt
+cat /boot/cmdline.txt
 # This is the ultimate step, otherwise all the above has no effect! Thanks to here: https://forums.raspberrypi.com/viewtopic.php?p=2195808#p2195808
 update-initramfs -u
 
 
 # INSTALL AR1100 SETUP TOOL -----------------------------------------------------------------------------------------------------------------------------------
 # This clones the rpi-AR1100 fork we have for the Lab-Box. This is a setup tool for the AR1100 touch screen controller on the Lab-Box Raspi Touch Display Module
-# Put the raspi-firmware and linux packages on hold (exclude from updated) as it requires /boot/fimrware to be present
 apt-get install -y git make g++ libusb-1.0-0-dev libgtk2.0-dev
 cd /home/$LAB_BOX_USER
 git clone --depth 1 https://github.com/Wardstein/rpi-AR1100.git
