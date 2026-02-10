@@ -3,3 +3,5 @@ export BASE_ARCH=aarch64
 export BASE_BOARD=raspberrypiarm64
 export BASE_IGNORE_VARIANT_NAME=yes
 export BASE_IMAGE_RASPBIAN=no
+# This is needed, so the workspace folder does not change between variants (or no variant at all) and we do not have to distinguish in the pipeline yaml
+export BASE_WORKSPACE=${DIST_PATH}/workspace

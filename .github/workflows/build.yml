@@ -20,7 +20,6 @@ on:
         description: "Raspberry Pi Password"
         required: true
         default: 'lab-box-pi'
-      # TODO: add a parameter if image is x32 or x64!
 
 
 jobs:
@@ -70,21 +69,21 @@ jobs:
     - name: Download RaspberryPiOS Image
       run: |
         # TODO: maybe got the OS info with the script from the SmartAmp image. Always choosing the latest might be error prone
+        CUSTOMPIOS_VARIANT_NAME=""
         if [[ "$IMAGE_BIT_WIDTH" -eq 32 ]]
         then
           cd repository/src/image
-          # wget -c --trust-server-names 'https://downloads.raspberrypi.org/raspios_lite_armhf_latest'    # LITE IS WITHOUT DESKTOP!
           wget -c --trust-server-names 'downloads.raspberrypi.com/raspios_armhf_latest'
         elif [[ "$IMAGE_BIT_WIDTH" -eq 64 ]]
         then
-          # cd repository/src/image-raspios_lite_arm64
-          cd repository/src/image-raspberrypiarm64
-          # wget -c --trust-server-names 'https://downloads.raspberrypi.org/raspios_lite_arm64_latest'    # LITE IS WITHOUT DESKTOP!
+          CUSTOMPIOS_VARIANT_NAME=raspberrypiarm64
+          cd repository/src/image-${CUSTOMPIOS_VARIANT_NAME}
           wget -c --trust-server-names 'https://downloads.raspberrypi.org/raspios_arm64_latest'
         else
           echo "Env variable IMAGE_BIT_WIDTH value: $IMAGE_BIT_WIDTH not valid!"
           exit 1
         fi
+        echo "CUSTOMPIOS_VARIANT_NAME=$CUSTOMPIOS_VARIANT_NAME" >> $GITHUB_ENV
         # Store the image name for later
         ORG_IMAGE_NAME=$(ls *.img.xz)
         echo $ORG_IMAGE_NAME
@@ -101,16 +100,8 @@ jobs:
       run: |
         sudo modprobe loop
         cd repository/src
-        if [[ "$IMAGE_BIT_WIDTH" -eq 32 ]]
-        then
-          sudo bash -x ./build_dist
-        elif [[ "$IMAGE_BIT_WIDTH" -eq 64 ]]
-        then
-          sudo bash -x ./build_dist raspberrypiarm64
-        else
-          echo "Env variable IMAGE_BIT_WIDTH value: $IMAGE_BIT_WIDTH not valid!"
-          exit 1
-        fi
+        sudo bash -x ./build_dist ${{ env.CUSTOMPIOS_VARIANT_NAME }}
+        
 
     - name: "Prepare release"
       run: |        
