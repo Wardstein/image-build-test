@@ -57,7 +57,7 @@ jobs:
       with:
         repository: 'guysoft/CustomPiOS'
         path: CustomPiOS
-        ref: "79b77a4c1a34ef551ab09e9bd84710d048b65e55"
+        ref: "98277d1586fb7b16b3d7c67f166e00857812597e"
 
 
     - name: Checkout Project Repository
