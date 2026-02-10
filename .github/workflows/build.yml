@@ -126,6 +126,7 @@ jobs:
         cp ../repository/src/workspace/*.img ${{ env.IMAGE_NAME }}
         # tar -cJf ${{ env.IMAGE_NAME_TAR_XZ }} ${{ env.IMAGE_NAME }}
         zip -q ${{ env.IMAGE_NAME_ZIP }} ${{ env.IMAGE_NAME }}
+        rm ${{ env.IMAGE_NAME }}
 
         # md5sum ${{ env.IMAGE_NAME_ZIP }} > ${{ env.IMAGE_NAME_ZIP }}.md5
         IMAGE_ARCHIVE_MD5SUM=$(md5sum ${{ env.IMAGE_NAME_ZIP }} | cut -d " " -f 1)
@@ -137,7 +138,7 @@ jobs:
         
         ls -la
         mkdir dist
-        cp ${{ env.IMAGE_NAME_ZIP }} dist/
+        mv ${{ env.IMAGE_NAME_ZIP }} dist/
         echo "$IMAGE_ARCHIVE_MD5SUM" > dist/${{ env.IMAGE_NAME_ZIP }}.md5
         echo "$IMAGE_ARCHIVE_SHA512SUM" > dist/${{ env.IMAGE_NAME_ZIP }}.sha512
         ZIP_ARCHIVE_SIZE=$(stat -c%s ${{ env.IMAGE_NAME_ZIP }} | awk '{printf "%.1f\n", $1/1024/1024/1024}')
