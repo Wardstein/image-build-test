@@ -112,7 +112,8 @@ jobs:
         cd repository/src
         sudo bash -x ./build_dist ${{ env.CUSTOMPIOS_VARIANT_NAME }}
       env:
-        TESTVARIABLE3="hello3"
+        TESTVARIABLE3: "hello3"
+
 
     - name: "Prepare release"
       run: |        
