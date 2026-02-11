@@ -156,6 +156,16 @@ jobs:
         MD5: [${{ env.IMAGE_NAME_ZIP }}.md5](${{ vars.FILE_DOWNLOAD_BASE_URL}}/${{ env.FTP_UPLOAD_FOLDER }}/${{ env.IMAGE_NAME_ZIP }}.md5)
         SHA512: [${{ env.IMAGE_NAME_ZIP }}.sha512](${{ vars.FILE_DOWNLOAD_BASE_URL}}/${{ env.FTP_UPLOAD_FOLDER }}/${{ env.IMAGE_NAME_ZIP }}.sha512)
 
+        ON THE FIRST START, YOU NEED TO RUN THE AR1100 TOOL AND SWITCH TO `MOUSE` MODE!
+        ```
+        $ sudo ./AR1100 -m
+        ```
+        AND MAYBE DO A CALIBRATION, DEPENDING ON WHETHER THIS IS THE FIRST USE OF THE MODULE AND IF THE DISPLAY IS CORRECT (the default 9 point calibration is sufficient)
+        ```
+        $ sudo ./AR1100 -c
+        ```
+        This command must be run via a terminal on the desktop, as it displays stuff. It is not possible to start the calibration through SSH.
+
         Default credentials:
         * User: "${{ env.LAB_BOX_USER }}"
         * Password: "${{ env.LAB_BOX_USER_PASSWORD }}"

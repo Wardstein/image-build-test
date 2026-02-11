@@ -159,8 +159,7 @@ then
   then
     # Install the required python packages from the GUI repo
     source venv-name
-    # Create the virtual environment WITH THE SYSTEM PACKAGES ACCESS (I know this is counter the idea of virtual environments, but there are no python packages for ARMhf for PySide6  as of Jan-2026!)
-    python -m venv $LAB_BOX_GUI_VENV --system-site-packages
+    python -m venv $LAB_BOX_GUI_VENV
     source $LAB_BOX_GUI_VENV/bin/activate
     python -m pip install -r requirements.txt
   fi
