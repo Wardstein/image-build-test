@@ -53,6 +53,9 @@ jobs:
         echo "LAB_BOX_PYTHON_GUI_COMMIT=$LAB_BOX_PYTHON_GUI_COMMIT" >> $GITHUB_ENV
         echo "LAB_BOX_USER=$LAB_BOX_USER" >> $GITHUB_ENV
         echo "LAB_BOX_USER_PASSWORD=$LAB_BOX_USER_PASSWORD" >> $GITHUB_ENV
+        
+        FTP_UPLOAD_FOLDER="${{ vars.FTP_UPLOAD_IMAGE_SUBFOLDER }}/${{ inputs.release-name }}"
+        echo "FTP_UPLOAD_FOLDER=$FTP_UPLOAD_FOLDER" >> $GITHUB_ENV
 
 
     - name: Checkout CustomPiOS
@@ -149,9 +152,9 @@ jobs:
         Image for the [Lab-Box](https://github.com/Wardstein/Lab-Box) [RaspberryPi Touch Display Module](https://github.com/Wardstein/Lab-Box/Modules/Display)
         To use this image, copy it to an SD card with at least 8GB. You can use e.g. [Balena Etcher](https://etcher.balena.io/).
 
-        DOWNLOAD HERE: [${{ env.IMAGE_NAME_ZIP }}](${{ vars.FILE_DOWNLOAD_BASE_URL}}/${{ vars.FTP_UPLOAD_SUBFOLDER }}/${{ env.IMAGE_NAME_ZIP }}) (${ZIP_ARCHIVE_SIZE} GiB)
-        MD5: [${{ env.IMAGE_NAME_ZIP }}.md5](${{ vars.FILE_DOWNLOAD_BASE_URL}}/${{ vars.FTP_UPLOAD_SUBFOLDER }}/${{ env.IMAGE_NAME_ZIP }}.md5)
-        SHA512: [${{ env.IMAGE_NAME_ZIP }}.sha512](${{ vars.FILE_DOWNLOAD_BASE_URL}}/${{ vars.FTP_UPLOAD_SUBFOLDER }}/${{ env.IMAGE_NAME_ZIP }}.sha512)
+        DOWNLOAD HERE: [${{ env.IMAGE_NAME_ZIP }}](${{ vars.FILE_DOWNLOAD_BASE_URL}}/${{ vars.FTP_UPLOAD_FOLDER }}/${{ env.IMAGE_NAME_ZIP }}) (${ZIP_ARCHIVE_SIZE} GiB)
+        MD5: [${{ env.IMAGE_NAME_ZIP }}.md5](${{ vars.FILE_DOWNLOAD_BASE_URL}}/${{ vars.FTP_UPLOAD_FOLDER }}/${{ env.IMAGE_NAME_ZIP }}.md5)
+        SHA512: [${{ env.IMAGE_NAME_ZIP }}.sha512](${{ vars.FILE_DOWNLOAD_BASE_URL}}/${{ vars.FTP_UPLOAD_FOLDER }}/${{ env.IMAGE_NAME_ZIP }}.sha512)
 
         Default credentials:
         * User: "${{ env.LAB_BOX_USER }}"
@@ -177,7 +180,8 @@ jobs:
         user: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
         localDir: "build/dist"
-        remoteDir: ${{ vars.FTP_UPLOAD_SUBFOLDER }}
+        remoteDir: ${{ env.FTP_UPLOAD_FOLDER }}
+    
     
     # https://github.com/softprops/action-gh-release
     # Needs "Workflow permissions" in Repo->Settings->Actions->Genernal set to "Read and write permissions"
