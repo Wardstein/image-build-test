@@ -1,35 +1,54 @@
-name: Release was deleted
+# name: Release was deleted
+
+# on:
+  # release:
+    # types:
+      # [deleted]
+    # # Possible types: published, unpublished, created, edited, deleted, prereleased, released
+    # branches: [devel]
+
+
+# jobs:
+  # build:
+    # runs-on: ubuntu-latest
+    # steps:
+    # - name: Setup Environment
+      # run: |
+        # echo "Tag name from env.GITHUB_REF: ${{ env.GITHUB_REF }}"
+        # echo "Tag name from env.GITHUB_REF_NAME: ${{ env.GITHUB_REF_NAME }}"
+        # echo "Tag name from GITHUB_REF_NAME: $GITHUB_REF_NAME"
+        # echo "Tag name from github.ref_name: ${{ github.ref_name }}"
+        
+        # FTP_UPLOAD_FOLDER="${{ vars.FTP_UPLOAD_IMAGE_SUBFOLDER }}/${{ github.ref_name }}"
+        # echo "FTP_UPLOAD_FOLDER=$FTP_UPLOAD_FOLDER" >> $GITHUB_ENV
+        
+        # echo "FTP_UPLOAD_FOLDER: $FTP_UPLOAD_FOLDER"
+
+
+    # - name: Delete files on ftp server
+    # # https://github.com/marketplace/actions/ftp-delete-action
+    # uses: StephanThierry/ftp-delete-action@v2.1
+      # with:
+        # TODO: fill with correct stuff
+        # host: ${{ secrets.FTP_SERVER }}
+        # user: ${{ secrets.FTP_USERNAME }}
+        # password: ${{ secrets.FTP_PASSWORD }}
+        # remoteFiles: "precache-manifest.*.js;logs/*.log"
+        # remoteDirectories: "/App_Data/TEMP"
+        # workingDir: "/public_html"
+        # ignoreSSL: "0"
+
+name: Release Deleted
 
 on:
   release:
     types:
-      - published
-      - created
-      - prereleased
-      - released
       - deleted
-    # Possible types: published, unpublished, created, edited, deleted, prereleased, released
-    branches: [devel]
-
 
 jobs:
-  build:
+  print-release-name:
     runs-on: ubuntu-latest
-    steps:
-    - name: Setup Environment
-      run: |
-        echo "Tag name from env.GITHUB_REF: ${{ env.GITHUB_REF }}"
-        echo "Tag name from env.GITHUB_REF_NAME: ${{ env.GITHUB_REF_NAME }}"
-        echo "Tag name from GITHUB_REF_NAME: $GITHUB_REF_NAME"
-        echo "Tag name from github.ref_name: ${{ github.ref_name }}"
-        
-        FTP_UPLOAD_FOLDER="${{ vars.FTP_UPLOAD_IMAGE_SUBFOLDER }}/${{ github.ref_name }}"
-        echo "FTP_UPLOAD_FOLDER=$FTP_UPLOAD_FOLDER" >> $GITHUB_ENV
-        
-        echo "FTP_UPLOAD_FOLDER: $FTP_UPLOAD_FOLDER"
 
-    - name: Checkout Project Repository
-      uses: actions/checkout@v6.0.1
-      with:
-        path: repository
-        submodules: true
+    steps:
+      - name: Print deleted release name
+        run: echo "Deleted release name: ${{ github.event.release.name }}"
