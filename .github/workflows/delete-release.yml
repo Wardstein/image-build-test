@@ -1,3 +1,36 @@
+# The goal of this GH Action was to delete from the build pipeline uploaded artifacts (via FTP), which are stored on a different server, as they are to large for GH release artifacts.
+# When the release is deleted, this pipeline shall get triggered, get the name of the deleted release and delete the according files on the file server (via FTP).
+
+# THE "ON RELEASE" ACTIONS DO NOT WORK (AS OF 2026-02-11)
+# I can use any "types" string, no types at all, types as list instead of array, with or without branch - nothing works...
+
+# An alternative which works are webhooks setup in the repo. There you can get a call for any "releases" event. (created, published, ... and deleted)
+# The body contains the name of the release. We could create e.g. a PHP script which resides on the file server and gets the github webhook request and deletes the files accordingly.
+# The web request authentication can be done with the "secret" in the webhook config and validate it in the server script:https://docs.github.com/en/webhooks/using-webhooks/validating-webhook-deliveries
+# The secret needs to be stored somewhere safe on the server (environment variable? manual created config file next to script? .htaccess file?)
+#   The php config in Plesk would work (only security problem is, that the env variable could be accessed by other PHP scripts!):
+#   1. In the PHP settings for the (sub)domain, under "Additional directives", enter the following (adapt variable name and value obviously with something for the secret)
+#       [php-fpm-pool-settings] 
+#       env[<some_name_for_the_gh_webhook_secret>]="<the_secret>"
+#   2. This then can be accessed in the script with:
+#       $_SERVER['some_env_variable']
+#   
+#   BETTER: Config file outside of the webroot (one folder up) and store the secret in there
+#   1. create the "config.php" file one folder up from the (sub)domain root folder
+#       <?php
+#           $theGhReleasesWebhookSecret = "12346789abcdef";
+#       ?>
+#   2. Load in the script file with 
+#       <?php
+#           require_once __DIR__.'/../config.php';
+#           // $theGhReleasesWebhookSecret is set here
+#       ?>
+#   3. Use variable with secret from config file
+
+
+
+
+
 # name: Release was deleted
 
 # on:
@@ -37,19 +70,3 @@
         # remoteDirectories: "/App_Data/TEMP"
         # workingDir: "/public_html"
         # ignoreSSL: "0"
-
-name: Release Deleted
-
-on:
-  release:
-    types:
-      - deleted
-
-jobs:
-  print-release-name:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Print deleted release name
-        run: |
-          echo "Deleted release name: ${{ github.event.release.name }}"
