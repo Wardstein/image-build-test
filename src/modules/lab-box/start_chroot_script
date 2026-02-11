@@ -15,6 +15,11 @@ apt-get full-upgrade -y
 apt-get install -y --allow-change-held-packages python3 python3-pip python3-venv python3-dev git
 
 
+# SET THE BOOT INTO GRAPHICAL INTERFACE -----------------------------------------------------------------------------------------------------------------------
+# systemctl --quiet set-default graphical.target
+# (should not be needed, as we start from the image with a desktop)
+
+
 # ADD OUR NEW DEFAULT USER ------------------------------------------------------------------------------------------------------------------------------------
 echo "Adding new user: ${LAB_BOX_USER}"
 adduser --gecos "" --disabled-password $LAB_BOX_USER
@@ -111,6 +116,7 @@ update-initramfs -u
 apt-get install -y git make g++ libusb-1.0-0-dev libgtk2.0-dev
 cd /home/$LAB_BOX_USER
 git clone --depth 1 https://github.com/Wardstein/rpi-AR1100.git
+chown -R $LAB_BOX_USER:$LAB_BOX_USER rpi-AR1100
 cd rpi-AR1100
 make
 chmod +x AR1100
@@ -147,7 +153,7 @@ then
       chmod +x $LAB_BOX_PYTHON_GUI_STARTFILE
     fi
   fi
-
+  
   # pyside6 wheel only exist for arm64, so this works only with 64bit images
   if [[ "$IMAGE_BIT_WIDTH" -eq 64 ]]
   then
@@ -159,7 +165,8 @@ then
     python -m pip install -r requirements.txt
   fi
   popd
-  
+  chown -R $LAB_BOX_USER:$LAB_BOX_USER /home/"${LAB_BOX_USER}"/lab-box-python-gui
+
   # Setup autostart: https://forums.raspberrypi.com/viewtopic.php?t=379321#p2267757 and https://raw.githubusercontent.com/thagrol/Guides/main/boot.pdf
   AUTOSTART_FILE="/home/$LAB_BOX_USER/.config/labwc/autostart"
   mkdir -p "$(dirname $AUTOSTART_FILE)"
@@ -168,6 +175,7 @@ cat << EOF > $AUTOSTART_FILE
 # /usr/bin/lwrespawn lxterminal -e /home/${LAB_BOX_USER}/lab-box-python-gui/startRasPiDisplayModule.sh          # This restarts when application exits
 /usr/bin/lxterminal -e /home/${LAB_BOX_USER}/lab-box-python-gui/startRasPiDisplayModule.sh
 EOF
+  chown -R $LAB_BOX_USER:$LAB_BOX_USER /home/$LAB_BOX_USER/.config
 
   # TODO: do we want to clone the Lab-Box repo with all the modules also? Does it make sense to have a "documentation" also on the Pi?
 fi
