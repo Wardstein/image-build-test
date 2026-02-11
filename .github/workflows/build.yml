@@ -152,9 +152,9 @@ jobs:
         Image for the [Lab-Box](https://github.com/Wardstein/Lab-Box) [RaspberryPi Touch Display Module](https://github.com/Wardstein/Lab-Box/Modules/Display)
         To use this image, copy it to an SD card with at least 8GB. You can use e.g. [Balena Etcher](https://etcher.balena.io/).
 
-        DOWNLOAD HERE: [${{ env.IMAGE_NAME_ZIP }}](${{ vars.FILE_DOWNLOAD_BASE_URL}}/${{ vars.FTP_UPLOAD_FOLDER }}/${{ env.IMAGE_NAME_ZIP }}) (${ZIP_ARCHIVE_SIZE} GiB)
-        MD5: [${{ env.IMAGE_NAME_ZIP }}.md5](${{ vars.FILE_DOWNLOAD_BASE_URL}}/${{ vars.FTP_UPLOAD_FOLDER }}/${{ env.IMAGE_NAME_ZIP }}.md5)
-        SHA512: [${{ env.IMAGE_NAME_ZIP }}.sha512](${{ vars.FILE_DOWNLOAD_BASE_URL}}/${{ vars.FTP_UPLOAD_FOLDER }}/${{ env.IMAGE_NAME_ZIP }}.sha512)
+        DOWNLOAD HERE: [${{ env.IMAGE_NAME_ZIP }}](${{ vars.FILE_DOWNLOAD_BASE_URL}}/${{ env.FTP_UPLOAD_FOLDER }}/${{ env.IMAGE_NAME_ZIP }}) (${ZIP_ARCHIVE_SIZE} GiB)
+        MD5: [${{ env.IMAGE_NAME_ZIP }}.md5](${{ vars.FILE_DOWNLOAD_BASE_URL}}/${{ env.FTP_UPLOAD_FOLDER }}/${{ env.IMAGE_NAME_ZIP }}.md5)
+        SHA512: [${{ env.IMAGE_NAME_ZIP }}.sha512](${{ vars.FILE_DOWNLOAD_BASE_URL}}/${{ env.FTP_UPLOAD_FOLDER }}/${{ env.IMAGE_NAME_ZIP }}.sha512)
 
         Default credentials:
         * User: "${{ env.LAB_BOX_USER }}"
@@ -165,8 +165,6 @@ jobs:
         Based on the RaspberryPi image: ${{ env.ORG_IMAGE_NAME }}
 
         Created with [CustomPiOS](https://github.com/guysoft/CustomPiOS)
-
-        <!-- mark:untested -->
         EOF
 
         # Copy the release info also for upload with unique name from image
