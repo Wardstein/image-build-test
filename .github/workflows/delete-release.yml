@@ -2,7 +2,11 @@ name: Release was deleted
 
 on:
   release:
-    types: [published]
+    types:
+      - published
+      - created
+      - prereleased
+      - deleted
     # Possible types: published, unpublished, created, edited, deleted, prereleased, released
 
 jobs:
