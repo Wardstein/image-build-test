@@ -74,6 +74,18 @@ raspi-config nonint do_serial_cons 1           				# Hardware interfaces like SP
 echo "i2c-dev" >> /etc/modules-load.d/modules.conf			# Seems to be needed, otherwise /dev/i2c-1 is not available
 
 
+if [ $(is_installed wayvnc) -eq 0 ]
+then
+  apt-get install -y wayvnc
+fi
+if [ $(is_installed wayvnc) -eq 1 ]
+then
+  systemctl enable wayvnc.service
+  systemctl start wayvnc.service
+fi
+
+
+
 # REMOVE PIWIZ ------------------------------------------------------------------------------------------------------------------------------------------------
 # Just unistalling pywiz does not solve the startup. We boot into "rpi-first-boot-wizard" user
 # https://forums.raspberrypi.com/viewtopic.php?p=2036168&sid=7e348ea4c90ad0c51def1eb973b20258#p2036168
@@ -181,10 +193,9 @@ fi
 
 
 # REMOVE UNNEEDED INSTALLED SOFTWARE --------------------------------------------------------------------------------------------------------------------------
-if [ $(is_installed chromium) -eq 1 ]
-then
-  apt-get remove -y chromium
-fi
+if [ $(is_installed chromium) -eq 1 ]; then apt-get remove -y chromium; fi
+if [ $(is_installed rpi-connect) -eq 1 ]; then apt-get remove -y rpi-connect; fi
+if [ $(is_installed rpi-imager) -eq 1 ]; then apt-get remove -y rpi-imager; fi
 
 
 # Cleanup -----------------------------------------------------------------------------------------------------------------------------------------------------
