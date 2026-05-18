@@ -194,7 +194,7 @@ jobs:
     # https://github.com/softprops/action-gh-release
     # Needs "Workflow permissions" in Repo->Settings->Actions->Genernal set to "Read and write permissions"
     - name: "Create release & attach assets"
-      uses: softprops/action-gh-release@v2
+      uses: softprops/action-gh-release@v3
       with:
         name: ${{ inputs.release-name }}
         tag_name: ${{ inputs.release-name }}
